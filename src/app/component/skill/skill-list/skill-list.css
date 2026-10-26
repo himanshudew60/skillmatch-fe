@@ -11,7 +11,10 @@
 }
 
 .page-header h2 {
-  margin: 0;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
 }
 
 .page-header p {
