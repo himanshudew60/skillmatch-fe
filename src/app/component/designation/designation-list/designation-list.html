@@ -1,0 +1,99 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Designations</h2>
+      <p>Manage employee designations.</p>
+    </div>
+
+    <a
+      routerLink="/dashboard/designations/add"
+      class="add-btn">
+      + Add Designation
+    </a>
+
+  </div>
+
+  <div *ngIf="successMessage" class="success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading designations...
+  </div>
+
+  <div
+    *ngIf="!loading && designations.length === 0"
+    class="empty">
+    No designations found.
+  </div>
+
+  <div
+    *ngIf="!loading && designations.length > 0"
+    class="table-card">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Designation</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr
+          *ngFor="let designation of designations; let i = index">
+
+          <td>{{ i + 1 }}</td>
+
+          <td>
+            <strong>{{ designation.name }}</strong>
+          </td>
+
+          <td>
+            {{ designation.description || '-' }}
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              <a
+                [routerLink]="[
+                  '/dashboard/designations/edit',
+                  designation.id
+                ]"
+                class="edit-btn">
+                Edit
+              </a>
+
+              <button
+                type="button"
+                class="delete-btn"
+                (click)="deleteDesignation(designation.id)">
+                Delete
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

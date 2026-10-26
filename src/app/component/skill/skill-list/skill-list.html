@@ -1,0 +1,95 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Skills</h2>
+      <p>Manage the skill taxonomy used by the resource system.</p>
+    </div>
+
+    <a
+      routerLink="/dashboard/skills/add"
+      class="add-btn">
+      + Add Skill
+    </a>
+
+  </div>
+
+  <div *ngIf="successMessage" class="success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading skills...
+  </div>
+
+  <div
+    *ngIf="!loading && skills.length === 0"
+    class="empty">
+    No skills found.
+  </div>
+
+  <div
+    *ngIf="!loading && skills.length > 0"
+    class="table-card">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Skill Name</th>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let skill of skills; let i = index">
+
+          <td>{{ i + 1 }}</td>
+
+          <td>
+            <strong>{{ skill.name }}</strong>
+          </td>
+
+          <td>
+            <span class="category">
+              {{ skill.category }}
+            </span>
+          </td>
+
+          <td>
+            <div class="actions">
+
+              <a
+                [routerLink]="['/dashboard/skills/edit', skill.id]"
+                class="edit-btn">
+                Edit
+              </a>
+
+              <button
+                type="button"
+                class="delete-btn"
+                (click)="deleteSkill(skill.id)">
+                Delete
+              </button>
+
+            </div>
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

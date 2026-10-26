@@ -1,0 +1,340 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Edit Project Requirement</h2>
+      <p>Update project resource and skill requirements.</p>
+    </div>
+
+    <a
+      routerLink="/dashboard/project-requirements"
+      class="back-btn">
+      Back
+    </a>
+
+  </div>
+
+
+  <div *ngIf="loading" class="loading">
+    Loading requirement...
+  </div>
+
+
+  <div *ngIf="!loading" class="form-card">
+
+    <!-- PROJECT -->
+
+    <div class="form-group">
+
+      <label for="project">
+        Project *
+      </label>
+
+      <select
+        id="project"
+        name="project"
+        [(ngModel)]="requirement.project_id">
+
+        <option [ngValue]="null">
+          Select Project
+        </option>
+
+        <option
+          *ngFor="let project of projects"
+          [ngValue]="project.id">
+
+          {{ project.project_code }}
+          - {{ project.project_name }}
+
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- RESOURCES -->
+
+    <div class="form-group">
+
+      <label for="resources">
+        Required Resources *
+      </label>
+
+      <input
+        id="resources"
+        type="number"
+        name="resources"
+        min="1"
+        [(ngModel)]="requirement.required_resources"
+        placeholder="Example: 4" />
+
+    </div>
+
+
+    <!-- PRIMARY SKILL -->
+
+    <div class="skill-section">
+
+      <div class="section-title">
+        <h3>Primary Skill</h3>
+        <span>Most important skill</span>
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="primarySkill">
+            Skill
+          </label>
+
+          <select
+            id="primarySkill"
+            name="primarySkill"
+            [(ngModel)]="requirement.primary_skill_id">
+
+            <option [ngValue]="null">
+              Select Primary Skill
+            </option>
+
+            <option
+              *ngFor="let skill of skills"
+              [ngValue]="skill.id">
+
+              {{ skill.name }}
+
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="primaryProficiency">
+            Required Proficiency
+          </label>
+
+          <select
+            id="primaryProficiency"
+            name="primaryProficiency"
+            [(ngModel)]="requirement.primary_proficiency">
+
+            <option [ngValue]="null">
+              Select Proficiency
+            </option>
+
+            <option
+              *ngFor="let level of proficiencyLevels"
+              [ngValue]="level">
+
+              {{ level }} / 5
+
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SECONDARY SKILL -->
+
+    <div class="skill-section">
+
+      <div class="section-title">
+        <h3>Secondary Skill</h3>
+        <span>Supporting skill</span>
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="secondarySkill">
+            Skill
+          </label>
+
+          <select
+            id="secondarySkill"
+            name="secondarySkill"
+            [(ngModel)]="requirement.secondary_skill_id">
+
+            <option [ngValue]="null">
+              Select Secondary Skill
+            </option>
+
+            <option
+              *ngFor="let skill of skills"
+              [ngValue]="skill.id">
+
+              {{ skill.name }}
+
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="secondaryProficiency">
+            Required Proficiency
+          </label>
+
+          <select
+            id="secondaryProficiency"
+            name="secondaryProficiency"
+            [(ngModel)]="requirement.secondary_proficiency">
+
+            <option [ngValue]="null">
+              Select Proficiency
+            </option>
+
+            <option
+              *ngFor="let level of proficiencyLevels"
+              [ngValue]="level">
+
+              {{ level }} / 5
+
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- TERTIARY SKILL -->
+
+    <div class="skill-section">
+
+      <div class="section-title">
+        <h3>Tertiary Skill</h3>
+        <span>Additional skill</span>
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="tertiarySkill">
+            Skill
+          </label>
+
+          <select
+            id="tertiarySkill"
+            name="tertiarySkill"
+            [(ngModel)]="requirement.tertiary_skill_id">
+
+            <option [ngValue]="null">
+              Select Tertiary Skill
+            </option>
+
+            <option
+              *ngFor="let skill of skills"
+              [ngValue]="skill.id">
+
+              {{ skill.name }}
+
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="tertiaryProficiency">
+            Required Proficiency
+          </label>
+
+          <select
+            id="tertiaryProficiency"
+            name="tertiaryProficiency"
+            [(ngModel)]="requirement.tertiary_proficiency">
+
+            <option [ngValue]="null">
+              Select Proficiency
+            </option>
+
+            <option
+              *ngFor="let level of proficiencyLevels"
+              [ngValue]="level">
+
+              {{ level }} / 5
+
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- DESCRIPTION -->
+
+    <div class="form-group">
+
+      <label for="description">
+        Requirement Description
+      </label>
+
+      <textarea
+        id="description"
+        name="description"
+        rows="4"
+        [(ngModel)]="requirement.requirement_description"
+        placeholder="Describe the resource requirement...">
+      </textarea>
+
+    </div>
+
+
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="success">
+      {{ successMessage }}
+    </div>
+
+
+    <div class="form-actions">
+
+      <a
+        routerLink="/dashboard/requirements"
+        class="cancel-btn">
+        Cancel
+      </a>
+
+      <button
+        type="button"
+        class="save-btn"
+        [disabled]="saving"
+        (click)="updateRequirement()">
+
+        {{ saving ? 'Updating...' : 'Update Requirement' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

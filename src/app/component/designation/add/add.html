@@ -1,0 +1,81 @@
+```html
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Add Designation</h2>
+      <p>Create a new employee designation.</p>
+    </div>
+
+    <a
+      routerLink="/dashboard/designations"
+      class="back-btn">
+      Back
+    </a>
+
+  </div>
+
+  <div class="form-card">
+
+    <div class="form-group">
+
+      <label for="name">
+        Designation Name *
+      </label>
+
+      <input
+        id="name"
+        type="text"
+        name="name"
+        [(ngModel)]="designation.name"
+        placeholder="Example: Senior Software Engineer" />
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="description">
+        Description
+      </label>
+
+      <textarea
+        id="description"
+        name="description"
+        rows="4"
+        [(ngModel)]="designation.description"
+        placeholder="Enter designation description">
+      </textarea>
+
+    </div>
+
+    <div
+      *ngIf="errorMessage"
+      class="error">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+
+      <a
+        routerLink="/dashboard/designations"
+        class="cancel-btn">
+        Cancel
+      </a>
+
+      <button
+        type="button"
+        class="save-btn"
+        [disabled]="saving"
+        (click)="saveDesignation()">
+
+        {{ saving ? 'Saving...' : 'Save Designation' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+```

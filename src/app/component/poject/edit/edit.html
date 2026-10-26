@@ -1,0 +1,302 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Edit Project</h2>
+
+      <p>
+        Update project information.
+      </p>
+    </div>
+
+    <a
+      routerLink="/dashboard/projects"
+      class="back-btn">
+
+      Back
+
+    </a>
+
+  </div>
+
+
+  <!-- Loading -->
+
+  <div
+    *ngIf="loading"
+    class="loading">
+
+    Loading project...
+
+  </div>
+
+
+  <!-- Form -->
+
+  <div
+    *ngIf="!loading"
+    class="form-card">
+
+    <!-- Project Code -->
+
+    <div class="form-group">
+
+      <label>
+        Project Code
+      </label>
+
+      <input
+        type="text"
+        [value]="project.project_code"
+        readonly
+      />
+
+    </div>
+
+
+    <!-- Project Name + Client -->
+
+    <div class="form-row">
+
+      <div class="form-group">
+
+        <label for="projectName">
+          Project Name *
+        </label>
+
+        <input
+          id="projectName"
+          type="text"
+          name="projectName"
+          [(ngModel)]="project.project_name"
+          placeholder="Enter project name"
+        />
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="clientName">
+          Client Name
+        </label>
+
+        <input
+          id="clientName"
+          type="text"
+          name="clientName"
+          [(ngModel)]="project.client_name"
+          placeholder="Enter client name"
+        />
+
+      </div>
+
+    </div>
+
+
+    <!-- Description -->
+
+    <div class="form-group">
+
+      <label for="description">
+        Description
+      </label>
+
+      <textarea
+        id="description"
+        name="description"
+        rows="4"
+        [(ngModel)]="project.description"
+        placeholder="Enter project description">
+      </textarea>
+
+    </div>
+
+
+    <!-- Department + Project Manager -->
+
+    <div class="form-row">
+
+      <div class="form-group">
+
+        <label for="department">
+          Department
+        </label>
+
+        <select
+          id="department"
+          name="department"
+          [(ngModel)]="project.department_id">
+
+          <option [ngValue]="null">
+            Select Department
+          </option>
+
+          <option
+            *ngFor="let department of departments"
+            [ngValue]="department.id">
+
+            {{ department.name }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="projectManager">
+          Project Manager
+        </label>
+
+        <select
+          id="projectManager"
+          name="projectManager"
+          [(ngModel)]="project.project_manager_id">
+
+          <option [ngValue]="null">
+            Select Project Manager
+          </option>
+
+          <option
+            *ngFor="let employee of employees"
+            [ngValue]="employee.id">
+
+            {{ employee.emp_name }}
+            ({{ employee.emp_code }})
+
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- Dates -->
+
+    <div class="form-row">
+
+      <div class="form-group">
+
+        <label for="startDate">
+          Start Date
+        </label>
+
+        <input
+          id="startDate"
+          type="date"
+          name="startDate"
+          [(ngModel)]="project.start_date"
+        />
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="endDate">
+          End Date
+        </label>
+
+        <input
+          id="endDate"
+          type="date"
+          name="endDate"
+          [(ngModel)]="project.end_date"
+        />
+
+      </div>
+
+    </div>
+
+
+    <!-- Status -->
+
+    <div class="form-group">
+
+      <label for="status">
+        Status
+      </label>
+
+      <select
+        id="status"
+        name="status"
+        [(ngModel)]="project.status">
+
+        <option value="Draft">
+          Draft
+        </option>
+
+        <option value="Active">
+          Active
+        </option>
+
+        <option value="Completed">
+          Completed
+        </option>
+
+        <option value="On Hold">
+          On Hold
+        </option>
+
+        <option value="Cancelled">
+          Cancelled
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- Messages -->
+
+    <div
+      *ngIf="errorMessage"
+      class="error">
+
+      {{ errorMessage }}
+
+    </div>
+
+
+    <div
+      *ngIf="successMessage"
+      class="success">
+
+      {{ successMessage }}
+
+    </div>
+
+
+    <!-- Buttons -->
+
+    <div class="form-actions">
+
+      <a
+        routerLink="/dashboard/projects"
+        class="cancel-btn">
+
+        Cancel
+
+      </a>
+
+      <button
+        type="button"
+        class="save-btn"
+        (click)="updateProject()"
+        [disabled]="saving">
+
+        {{ saving ? 'Updating...' : 'Update Project' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

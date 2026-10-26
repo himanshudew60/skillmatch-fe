@@ -1,0 +1,166 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h2>Project Requirements</h2>
+      <p>Manage project skill requirements and resource needs.</p>
+    </div>
+
+    <a routerLink="/dashboard/requirements/addrequirements" class="add-btn">
+      + Add Requirement
+    </a>
+  </div>
+
+  <div *ngIf="successMessage" class="success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading requirements...
+  </div>
+
+  <div *ngIf="!loading && requirements.length === 0" class="empty">
+    No project requirements found.
+  </div>
+
+  <div *ngIf="!loading && requirements.length > 0" class="table-card">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Project</th>
+          <th>Resources</th>
+          <th>Primary Skill</th>
+          <th>Secondary Skill</th>
+          <th>Tertiary Skill</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let requirement of requirements; let i = index">
+
+          <td>
+            {{ i + 1 }}
+          </td>
+
+          <td>
+            <strong>
+              {{ requirement.project_name }}
+            </strong>
+
+            <small>
+              {{ requirement.project_code }}
+            </small>
+          </td>
+
+          <td>
+            <span class="resource-badge">
+              {{ requirement.required_resources }}
+            </span>
+          </td>
+
+          <!-- PRIMARY -->
+          <td>
+            <ng-container *ngIf="requirement.primary_skill_name; else noPrimary">
+              <strong>
+                {{ requirement.primary_skill_name }}
+              </strong>
+
+              <span class="proficiency">
+                {{ requirement.primary_proficiency }}/5
+              </span>
+            </ng-container>
+
+            <ng-template #noPrimary>
+              -
+            </ng-template>
+          </td>
+
+          <!-- SECONDARY -->
+          <td>
+            <ng-container *ngIf="requirement.secondary_skill_name; else noSecondary">
+              <strong>
+                {{ requirement.secondary_skill_name }}
+              </strong>
+
+              <span class="proficiency">
+                {{ requirement.secondary_proficiency }}/5
+              </span>
+            </ng-container>
+
+            <ng-template #noSecondary>
+              -
+            </ng-template>
+          </td>
+
+          <!-- TERTIARY -->
+          <td>
+            <ng-container *ngIf="requirement.tertiary_skill_name; else noTertiary">
+              <strong>
+                {{ requirement.tertiary_skill_name }}
+              </strong>
+
+              <span class="proficiency">
+                {{ requirement.tertiary_proficiency }}/5
+              </span>
+            </ng-container>
+
+            <ng-template #noTertiary>
+              -
+            </ng-template>
+          </td>
+
+          <td>
+            {{ requirement.requirement_description || '-' }}
+          </td>
+
+          <td>
+            <div class="actions">
+
+              <a
+                [routerLink]="[
+                  '/dashboard/requirements/viewrequirements',
+                  requirement.id
+                ]"
+                class="view-btn">
+                View
+              </a>
+
+              <a
+                [routerLink]="[
+                  '/dashboard/requirements/editrequirements',
+                  requirement.id
+                ]"
+                class="edit-btn">
+                Edit
+              </a>
+
+              <button
+                type="button"
+                class="delete-btn"
+                (click)="deleteRequirement(requirement.id)">
+                Delete
+              </button>
+
+            </div>
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

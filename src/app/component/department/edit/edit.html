@@ -1,0 +1,70 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h2>Edit Department</h2>
+      <p>Update department information.</p>
+    </div>
+
+    <a routerLink="/dashboard/departments" class="back-btn">
+      Back
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading department...
+  </div>
+
+  <div *ngIf="!loading" class="form-card">
+
+    <div class="form-group">
+      <label for="departmentName">Department Name *</label>
+      <input
+        id="departmentName"
+        type="text"
+        name="departmentName"
+        [(ngModel)]="department.name"
+        placeholder="Enter department name"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        rows="5"
+        [(ngModel)]="department.description"
+        placeholder="Enter department description"
+      ></textarea>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="success">
+      {{ successMessage }}
+    </div>
+
+    <div class="form-actions">
+      <a
+        routerLink="/dashboard/departments"
+        class="cancel-btn"
+      >
+        Cancel
+      </a>
+
+      <button
+        type="button"
+        class="save-btn"
+        (click)="updateDepartment()"
+        [disabled]="saving"
+      >
+        {{ saving ? 'Updating...' : 'Update Department' }}
+      </button>
+    </div>
+
+  </div>
+
+</div>

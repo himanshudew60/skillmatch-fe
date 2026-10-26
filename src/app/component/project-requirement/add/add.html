@@ -1,0 +1,407 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Add Project Requirement</h2>
+
+      <p>
+        Define the skills and resources required for the project.
+      </p>
+    </div>
+
+    <a
+      routerLink="/dashboard/requirements"
+      class="back-btn">
+      Back
+    </a>
+
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading...
+  </div>
+
+  <div
+    *ngIf="!loading"
+    class="form-card">
+
+    <!-- Project -->
+
+    <div class="form-group">
+
+      <label for="project">
+        Project *
+      </label>
+
+      <select
+        id="project"
+        name="project"
+        [(ngModel)]="requirement.project_id">
+
+        <option [ngValue]="null">
+          Select Project
+        </option>
+
+        <option
+          *ngFor="let project of projects"
+          [ngValue]="project.id">
+
+          {{ project.project_code }} -
+          {{ project.project_name }}
+
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- Required Resources -->
+
+    <div class="form-group">
+
+      <label for="resources">
+        Required Resources *
+      </label>
+
+      <input
+        id="resources"
+        type="number"
+        name="resources"
+        min="1"
+        [(ngModel)]="requirement.required_resources"
+        placeholder="e.g. 4" />
+
+      <small>
+        Number of employees/resources required for this project.
+      </small>
+
+    </div>
+
+
+    <!-- PRIMARY -->
+
+    <div class="skill-section primary-section">
+
+      <div class="section-title">
+
+        <span class="skill-number">
+          1
+        </span>
+
+        <div>
+          <h3>Primary Skill</h3>
+          <p>Main skill required for the project.</p>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="primarySkill">
+            Skill *
+          </label>
+
+          <select
+            id="primarySkill"
+            name="primarySkill"
+            [(ngModel)]="requirement.primary_skill_id">
+
+            <option [ngValue]="null">
+              Select Primary Skill
+            </option>
+
+            <option
+              *ngFor="let skill of skills"
+              [ngValue]="skill.id">
+
+              {{ skill.name }}
+              <span *ngIf="skill.category">
+                - {{ skill.category }}
+              </span>
+
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            Proficiency *
+          </label>
+
+          <div class="proficiency-options">
+
+            <label
+              *ngFor="let level of [1,2,3,4,5]"
+              class="proficiency-option">
+
+              <input
+                type="radio"
+                name="primaryProficiency"
+                [value]="level"
+                [(ngModel)]="requirement.primary_proficiency" />
+
+              <span>
+                {{ level }}
+              </span>
+
+            </label>
+
+          </div>
+
+          <small>
+            1 = Beginner, 5 = Expert
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SECONDARY -->
+
+    <div class="skill-section secondary-section">
+
+      <div class="section-title">
+
+        <span class="skill-number">
+          2
+        </span>
+
+        <div>
+          <h3>Secondary Skill</h3>
+          <p>Supporting skill required for the project.</p>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="secondarySkill">
+            Skill
+          </label>
+
+          <select
+            id="secondarySkill"
+            name="secondarySkill"
+            [(ngModel)]="requirement.secondary_skill_id">
+
+            <option [ngValue]="null">
+              None
+            </option>
+
+            <option
+              *ngFor="let skill of skills"
+              [ngValue]="skill.id">
+
+              {{ skill.name }}
+
+              <span *ngIf="skill.category">
+                - {{ skill.category }}
+              </span>
+
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            Proficiency
+          </label>
+
+          <div class="proficiency-options">
+
+            <label
+              *ngFor="let level of [1,2,3,4,5]"
+              class="proficiency-option">
+
+              <input
+                type="radio"
+                name="secondaryProficiency"
+                [value]="level"
+                [(ngModel)]="requirement.secondary_proficiency"
+                [disabled]="!requirement.secondary_skill_id" />
+
+              <span>
+                {{ level }}
+              </span>
+
+            </label>
+
+          </div>
+
+          <small>
+            1 = Beginner, 5 = Expert
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- TERTIARY -->
+
+    <div class="skill-section tertiary-section">
+
+      <div class="section-title">
+
+        <span class="skill-number">
+          3
+        </span>
+
+        <div>
+          <h3>Tertiary Skill</h3>
+          <p>Additional skill required for the project.</p>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="tertiarySkill">
+            Skill
+          </label>
+
+          <select
+            id="tertiarySkill"
+            name="tertiarySkill"
+            [(ngModel)]="requirement.tertiary_skill_id">
+
+            <option [ngValue]="null">
+              None
+            </option>
+
+            <option
+              *ngFor="let skill of skills"
+              [ngValue]="skill.id">
+
+              {{ skill.name }}
+
+              <span *ngIf="skill.category">
+                - {{ skill.category }}
+              </span>
+
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            Proficiency
+          </label>
+
+          <div class="proficiency-options">
+
+            <label
+              *ngFor="let level of [1,2,3,4,5]"
+              class="proficiency-option">
+
+              <input
+                type="radio"
+                name="tertiaryProficiency"
+                [value]="level"
+                [(ngModel)]="requirement.tertiary_proficiency"
+                [disabled]="!requirement.tertiary_skill_id" />
+
+              <span>
+                {{ level }}
+              </span>
+
+            </label>
+
+          </div>
+
+          <small>
+            1 = Beginner, 5 = Expert
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- DESCRIPTION -->
+
+    <div class="form-group">
+
+      <label for="description">
+        Requirement Description
+      </label>
+
+      <textarea
+        id="description"
+        name="description"
+        rows="4"
+        [(ngModel)]="requirement.requirement_description"
+        placeholder="Describe the resource requirement...">
+      </textarea>
+
+    </div>
+
+
+    <div
+      *ngIf="errorMessage"
+      class="error">
+
+      {{ errorMessage }}
+
+    </div>
+
+
+    <div
+      *ngIf="successMessage"
+      class="success">
+
+      {{ successMessage }}
+
+    </div>
+
+
+    <div class="form-actions">
+
+      <a
+        routerLink="/dashboard/projects/requirements"
+        class="cancel-btn">
+        Cancel
+      </a>
+
+      <button
+        type="button"
+        class="save-btn"
+        (click)="saveRequirement()"
+        [disabled]="saving">
+
+        {{ saving
+          ? 'Saving...'
+          : 'Save Requirement'
+        }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

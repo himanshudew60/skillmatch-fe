@@ -1,0 +1,75 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h2>Edit Designation</h2>
+      <p>Update designation information.</p>
+    </div>
+
+    <a routerLink="/dashboard/designations" class="back-btn">
+      Back
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading designation...
+  </div>
+
+  <div *ngIf="!loading" class="form-card">
+
+    <div class="form-group">
+      <label for="designationName">Designation Name *</label>
+
+      <input
+        id="designationName"
+        type="text"
+        name="designationName"
+        [(ngModel)]="designation.name"
+        placeholder="Enter designation name"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+
+      <textarea
+        id="description"
+        name="description"
+        rows="5"
+        [(ngModel)]="designation.description"
+        placeholder="Enter designation description"
+      ></textarea>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="success">
+      {{ successMessage }}
+    </div>
+
+    <div class="form-actions">
+
+      <a
+        routerLink="/dashboard/designations"
+        class="cancel-btn"
+      >
+        Cancel
+      </a>
+
+      <button
+        type="button"
+        class="save-btn"
+        (click)="updateDesignation()"
+        [disabled]="saving"
+      >
+        {{ saving ? 'Updating...' : 'Update Designation' }}
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

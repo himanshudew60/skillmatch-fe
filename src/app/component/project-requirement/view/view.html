@@ -1,0 +1,208 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Project Requirement</h2>
+      <p>View required skills and resource requirements.</p>
+    </div>
+
+    <div class="header-actions">
+
+      <a
+        routerLink="/dashboard/requirements"
+        class="back-btn">
+        Back
+      </a>
+
+      <a
+        *ngIf="requirement"
+        [routerLink]="[
+          '/dashboard/requirements/editrequirements',
+          requirement.id
+        ]"
+        class="edit-btn">
+        Edit
+      </a>
+
+    </div>
+
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading requirement...
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && requirement" class="content-card">
+
+    <!-- PROJECT INFORMATION -->
+
+    <div class="section">
+
+      <h3>Project Information</h3>
+
+      <div class="info-grid">
+
+        <div class="info-item">
+          <label>Project Code</label>
+          <span>
+            {{ requirement.project_code || '-' }}
+          </span>
+        </div>
+
+        <div class="info-item">
+          <label>Project Name</label>
+          <span>
+            {{ requirement.project_name || '-' }}
+          </span>
+        </div>
+
+        <div class="info-item">
+          <label>Required Resources</label>
+          <span class="resource-value">
+            {{ requirement.required_resources }}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SKILL REQUIREMENTS -->
+
+    <div class="section">
+
+      <h3>Skill Requirements</h3>
+
+      <div class="skills-grid">
+
+        <!-- PRIMARY -->
+
+        <div class="skill-card primary">
+
+          <div class="skill-level">
+            Primary Skill
+          </div>
+
+          <div
+            *ngIf="requirement.primary_skill_name; else noPrimary"
+            class="skill-content">
+
+            <h4>
+              {{ requirement.primary_skill_name }}
+            </h4>
+
+            <div class="proficiency">
+              <span>Required Proficiency</span>
+
+              <strong>
+                {{ requirement.primary_proficiency }}/5
+              </strong>
+            </div>
+
+          </div>
+
+          <ng-template #noPrimary>
+            <div class="no-skill">
+              No primary skill selected.
+            </div>
+          </ng-template>
+
+        </div>
+
+
+        <!-- SECONDARY -->
+
+        <div class="skill-card secondary">
+
+          <div class="skill-level">
+            Secondary Skill
+          </div>
+
+          <div
+            *ngIf="requirement.secondary_skill_name; else noSecondary"
+            class="skill-content">
+
+            <h4>
+              {{ requirement.secondary_skill_name }}
+            </h4>
+
+            <div class="proficiency">
+              <span>Required Proficiency</span>
+
+              <strong>
+                {{ requirement.secondary_proficiency }}/5
+              </strong>
+            </div>
+
+          </div>
+
+          <ng-template #noSecondary>
+            <div class="no-skill">
+              No secondary skill selected.
+            </div>
+          </ng-template>
+
+        </div>
+
+
+        <!-- TERTIARY -->
+
+        <div class="skill-card tertiary">
+
+          <div class="skill-level">
+            Tertiary Skill
+          </div>
+
+          <div
+            *ngIf="requirement.tertiary_skill_name; else noTertiary"
+            class="skill-content">
+
+            <h4>
+              {{ requirement.tertiary_skill_name }}
+            </h4>
+
+            <div class="proficiency">
+              <span>Required Proficiency</span>
+
+              <strong>
+                {{ requirement.tertiary_proficiency }}/5
+              </strong>
+            </div>
+
+          </div>
+
+          <ng-template #noTertiary>
+            <div class="no-skill">
+              No tertiary skill selected.
+            </div>
+          </ng-template>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- DESCRIPTION -->
+
+    <div class="section">
+
+      <h3>Requirement Description</h3>
+
+      <p class="description">
+        {{ requirement.requirement_description || 'No description provided.' }}
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

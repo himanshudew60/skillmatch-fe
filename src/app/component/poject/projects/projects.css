@@ -1,0 +1,93 @@
+.page-container {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  margin: 0;
+}
+
+.page-header p {
+  margin: 6px 0 0;
+  color: #6b7280;
+}
+
+.add-btn {
+  padding: 10px 18px;
+  background: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 13px 15px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  background: #f9fafb;
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.actions a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.actions button {
+  border: none;
+  background: transparent;
+  color: #dc2626;
+  cursor: pointer;
+}
+
+.status {
+  padding: 4px 9px;
+  border-radius: 20px;
+  background: #f3f4f6;
+  font-size: 12px;
+}
+
+.loading,
+.empty {
+  padding: 30px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.error {
+  padding: 12px;
+  margin-bottom: 15px;
+  background: #fee2e2;
+  color: #b91c1c;
+  border-radius: 6px;
+}

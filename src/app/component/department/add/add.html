@@ -1,0 +1,80 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Add Department</h2>
+      <p>Create a new department.</p>
+    </div>
+
+    <a
+      routerLink="/dashboard/departments"
+      class="back-btn">
+      Back
+    </a>
+
+  </div>
+
+  <div class="form-card">
+
+    <div class="form-group">
+
+      <label for="name">
+        Department Name *
+      </label>
+
+      <input
+        id="name"
+        type="text"
+        name="name"
+        [(ngModel)]="department.name"
+        placeholder="Example: Information Technology" />
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="description">
+        Description
+      </label>
+
+      <textarea
+        id="description"
+        name="description"
+        rows="4"
+        [(ngModel)]="department.description"
+        placeholder="Enter department description">
+      </textarea>
+
+    </div>
+
+    <div
+      *ngIf="errorMessage"
+      class="error">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+
+      <a
+        routerLink="/dashboard/departments"
+        class="cancel-btn">
+        Cancel
+      </a>
+
+      <button
+        type="button"
+        class="save-btn"
+        [disabled]="saving"
+        (click)="saveDepartment()">
+
+        {{ saving ? 'Saving...' : 'Save Department' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
