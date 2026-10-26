@@ -1,0 +1,17 @@
+<div class="dashboard-shell" >
+
+  <app-sidebar [loggedUser]="user"></app-sidebar>
+
+  <main class="main-area">
+
+    <app-header [loggedUser]="user"></app-header>
+
+    <section class="content-area">
+
+      <router-outlet></router-outlet>
+
+    </section>
+
+  </main>
+
+</div>

@@ -1,0 +1,230 @@
+
+<div class="employee-page">
+  <div class="page-header">
+    <div>
+      <h2>Edit Employee</h2>
+      <p>Update employee information and skills.</p>
+    </div>
+
+    <a
+      class="btn btn-secondary"
+      (click)="goBack()"
+    >
+      Cancel
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="message">
+    Loading employee information...
+  </div>
+
+  <div *ngIf="!loading && errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <form
+    *ngIf="!loading && employeeCode"
+    [formGroup]="employeeForm"
+    (ngSubmit)="saveChanges()"
+    novalidate
+  >
+    <section class="card">
+      <h3>Employee Information</h3>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Employee Code</label>
+          <input [value]="employeeCode" readonly />
+        </div>
+
+        <div class="form-field">
+          <label>Employee Name *</label>
+          <input formControlName="emp_name" placeholder="Enter employee name" />
+          <small *ngIf="employeeForm.get('emp_name')?.touched && employeeForm.get('emp_name')?.invalid">
+            Employee name is required.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label>Email *</label>
+          <input type="email" formControlName="emp_email" placeholder="Enter email" />
+          <small *ngIf="employeeForm.get('emp_email')?.touched && employeeForm.get('emp_email')?.invalid">
+            Enter a valid email address.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label>Department *</label>
+          <select formControlName="department_id">
+            <option value="">Select Department</option>
+            <option *ngFor="let department of departments" [value]="department.id">
+              {{ department.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label>Designation *</label>
+          <select formControlName="designation_id">
+            <option value="">Select Designation</option>
+            <option *ngFor="let designation of designations" [value]="designation.id">
+              {{ designation.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label>Location *</label>
+          <input formControlName="location" placeholder="Enter location" />
+        </div>
+
+        <div class="form-field">
+          <label>Resource Status *</label>
+          <select formControlName="resource_status">
+            <option [ngValue]="0">Available</option>
+            <option [ngValue]="1">Allocated</option>
+            <option [ngValue]="2">Partially Available</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label>Available From</label>
+          <input type="date" formControlName="available_from" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="skills-header">
+        <div>
+          <h3>Employee Skills</h3>
+          <p>Update proficiency, experience and validation details.</p>
+        </div>
+
+        <button type="button" class="btn btn-secondary" (click)="addSkill()">
+          + Add Skill
+        </button>
+      </div>
+
+      <div formArrayName="skills">
+        <div
+          class="skill-card"
+          *ngFor="let skill of skills.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <div class="skill-card-header">
+            <strong>Skill {{ i + 1 }}</strong>
+            <button
+              type="button"
+              class="remove-btn"
+              (click)="removeSkill(i)"
+            >
+              Remove
+            </button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Skill *</label>
+              <select formControlName="skill_id">
+                <option value="">Select Skill</option>
+                <option
+                  *ngFor="let item of availableSkills"
+                  [value]="item.id"
+                >
+                  {{ item.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Skill Type *</label>
+              <select formControlName="skill_type">
+                <option value="Primary">Primary</option>
+                <option value="Secondary">Secondary</option>
+                <option value="Tertiary">Tertiary</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Proficiency (1–5)</label>
+              <input
+                type="number"
+                min="1"
+                max="5"
+                step="0.1"
+                formControlName="proficiency"
+              />
+            </div>
+
+            <div class="form-field">
+              <label>Experience (months)</label>
+              <input
+                type="number"
+                min="0"
+                formControlName="experience_months"
+              />
+            </div>
+
+            <div class="form-field">
+              <label>Assessment Score (0–100)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                formControlName="assessment_score"
+              />
+            </div>
+
+            <div class="form-field">
+              <label>Project Experience (months)</label>
+              <input
+                type="number"
+                min="0"
+                formControlName="project_experience_months"
+              />
+            </div>
+
+            <div class="form-field">
+              <label>Certification</label>
+              <input
+                formControlName="certification"
+                placeholder="Certification name"
+              />
+            </div>
+
+            <div class="form-field">
+              <label>Validation Status *</label>
+              <select formControlName="skill_validation_status">
+                <option value="Self">Self</option>
+                <option value="Manager">Manager</option>
+                <option value="Assessment">Assessment</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="skills.length === 0" class="empty-state">
+          No skills added. Click “Add Skill” to add one.
+        </div>
+      </div>
+    </section>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <a
+        class="btn btn-secondary"
+        [routerLink]="['/dashboard/employees', employeeId]"
+      >
+        Cancel
+      </a>
+
+      <button type="submit" class="btn btn-primary" [disabled]="saving">
+        {{ saving ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </form>
+</div>

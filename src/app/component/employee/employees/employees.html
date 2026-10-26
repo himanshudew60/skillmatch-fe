@@ -1,0 +1,267 @@
+<div class="h-[523px] w-[1142px] border border-red-600 bg-white">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b px-4 py-3">
+
+        <div>
+            <h2 class="text-lg font-semibold text-gray-800">
+                Employees
+            </h2>
+
+            <p class="text-sm text-gray-500">
+                Manage employee information
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+
+            <!-- Import -->
+            <button
+                type="button"
+                (click)="openImportModal()"
+                class="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+            >
+                Import Excel
+            </button>
+
+            <!-- Add Employee -->
+            <a
+                routerLink="/dashboard/employees/addemployees"
+                class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+                + Add Employee
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Employee List -->
+    <div class="overflow-auto" style="height: 455px;">
+
+        <!-- Loading -->
+        <div
+            *ngIf="loading"
+            class="flex h-40 items-center justify-center text-gray-500"
+        >
+            Loading employees...
+        </div>
+
+
+        <!-- Table -->
+        <table
+            *ngIf="!loading && employees.length > 0"
+            class="w-full border-collapse"
+        >
+
+            <thead class="sticky top-0 bg-gray-100">
+
+                <tr class="border-b">
+
+                    <th class="px-4 py-3 text-left text-sm font-semibold">
+                        #
+                    </th>
+
+                    <th class="px-4 py-3 text-left text-sm font-semibold">
+                        Employee Code
+                    </th>
+
+                    <th class="px-4 py-3 text-left text-sm font-semibold">
+                        Name
+                    </th>
+
+                    <th class="px-4 py-3 text-left text-sm font-semibold">
+                        Email
+                    </th>
+
+                    <th class="px-4 py-3 text-left text-sm font-semibold">
+                        Department
+                    </th>
+
+                    <th class="px-4 py-3 text-left text-sm font-semibold">
+                        Designation
+                    </th>
+
+                    <th class="px-4 py-3 text-left text-sm font-semibold">
+                        Location
+                    </th>
+
+                    <th class="px-4 py-3 text-left text-sm font-semibold">
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr
+                    *ngFor="let employee of employees; let i = index"
+                    class="border-b hover:bg-gray-50"
+                >
+
+                    <td class="px-4 py-3 text-sm">
+                        {{ i + 1 }}
+                    </td>
+
+                    <td class="px-4 py-3 text-sm font-medium">
+                        {{ employee.emp_code }}
+                    </td>
+
+                    <td class="px-4 py-3 text-sm">
+                        {{ employee.emp_name }}
+                    </td>
+
+                    <td class="px-4 py-3 text-sm">
+                        {{ employee.emp_email }}
+                    </td>
+
+                    <td class="px-4 py-3 text-sm">
+                        {{ employee.department_name }}
+                    </td>
+
+                    <td class="px-4 py-3 text-sm">
+                        {{ employee.designation_name }}
+                    </td>
+
+                    <td class="px-4 py-3 text-sm">
+                        {{ employee.location }}
+                    </td>
+
+                    <td class="px-4 py-3 text-sm">
+
+                        <span
+                            *ngIf="employee.resource_status === 0"
+                            class="rounded-full bg-green-100 px-2 py-1 text-xs text-green-700"
+                        >
+                            Available
+                        </span>
+
+                        <span
+                            *ngIf="employee.resource_status === 1"
+                            class="rounded-full bg-red-100 px-2 py-1 text-xs text-red-700"
+                        >
+                            Allocated
+                        </span>
+
+                        <span
+                            *ngIf="employee.resource_status === 2"
+                            class="rounded-full bg-yellow-100 px-2 py-1 text-xs text-yellow-700"
+                        >
+                            Partially Available
+                        </span>
+
+                    </td>
+                    <td>
+                        <a [routerLink]="['/dashboard/employees/viewemployees', employee.id]">
+  View
+</a>
+<a
+  [routerLink]="['/dashboard/employees/editemployees', employee.id]"
+>
+  Edit Employee
+</a>
+                    </td>
+
+                </tr>
+
+
+            </tbody>
+
+        </table>
+
+
+        <!-- No employees -->
+        <div
+            *ngIf="!loading && employees.length === 0"
+            class="flex h-60 items-center justify-center text-gray-500"
+        >
+            No employees found.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Import Modal -->
+
+<div
+    *ngIf="showImportModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+>
+
+    <div class="w-[450px] rounded-lg bg-white p-6 shadow-xl">
+
+        <div class="mb-4 flex items-center justify-between">
+
+            <h3 class="text-lg font-semibold">
+                Import Employees
+            </h3>
+
+            <button
+                type="button"
+                (click)="closeImportModal()"
+                class="text-xl text-gray-500 hover:text-gray-800"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="mb-5">
+
+            <label class="mb-2 block text-sm font-medium">
+                Select Excel / CSV File
+            </label>
+
+            <input
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                (change)="onFileSelected($event)"
+                class="w-full rounded border p-2 text-sm"
+            />
+
+        </div>
+
+
+        <div
+            *ngIf="selectedFile"
+            class="mb-4 rounded bg-gray-50 p-3 text-sm"
+        >
+            Selected file:
+
+            <strong>
+                {{ selectedFile.name }}
+            </strong>
+        </div>
+
+
+        <div class="flex justify-end gap-2">
+
+            <button
+                type="button"
+                (click)="closeImportModal()"
+                class="rounded border px-4 py-2 text-sm"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                (click)="importEmployees()"
+                [disabled]="!selectedFile || importing"
+                class="rounded bg-green-600 px-4 py-2 text-sm text-white disabled:opacity-50"
+            >
+                {{ importing ? 'Importing...' : 'Import Employees' }}
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

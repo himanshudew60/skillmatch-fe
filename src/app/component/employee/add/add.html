@@ -1,0 +1,429 @@
+<div class="h-[523px] w-[1142px] overflow-y-auto border border-red-600 bg-white p-6">
+
+  <!-- ==================== EMPLOYEE INFORMATION ==================== -->
+  <div class="mb-6">
+
+    <div class="mb-5">
+      <h2 class="text-xl font-semibold text-gray-800">
+        Add Employee
+      </h2>
+
+      <p class="mt-1 text-sm text-gray-500">
+        Create an employee profile and add their skills.
+      </p>
+    </div>
+
+    <!-- Employee Basic Information -->
+    <div class="grid grid-cols-4 gap-4">
+
+      
+      <!-- Employee Name -->
+      <div class="form-group">
+        <label for="emp_name">
+          Employee Name
+          <span class="text-red-500">*</span>
+        </label>
+
+        <input
+          id="emp_name"
+          type="text"
+          [(ngModel)]="employeeForm.emp_name"
+          name="emp_name"
+          placeholder="Enter employee name"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Employee Email -->
+      <div class="form-group">
+        <label for="emp_email">
+          Employee Email
+          <span class="text-red-500">*</span>
+        </label>
+
+        <input
+          id="emp_email"
+          type="email"
+          [(ngModel)]="employeeForm.emp_email"
+          name="emp_email"
+          placeholder="employee@company.com"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Location -->
+      <div class="form-group">
+        <label for="location">
+          Location
+        </label>
+
+        <input
+          id="location"
+          type="text"
+          [(ngModel)]="employeeForm.location"
+          name="location"
+          placeholder="Ahmedabad"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Department -->
+      <div class="form-group">
+        <label for="department_id">
+          Department
+          <span class="text-red-500">*</span>
+        </label>
+
+        <select
+          id="department_id"
+          [(ngModel)]="employeeForm.department_id"
+          name="department_id"
+        >
+          <option [ngValue]="null">
+            Select Department
+          </option>
+
+          <option
+            *ngFor="let department of departments"
+            [ngValue]="department.id"
+          >
+            {{ department.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Designation -->
+      <div class="form-group">
+        <label for="designation_id">
+          Designation
+          <span class="text-red-500">*</span>
+        </label>
+
+        <select
+          id="designation_id"
+          [(ngModel)]="employeeForm.designation_id"
+          name="designation_id"
+        >
+          <option [ngValue]="null">
+            Select Designation
+          </option>
+
+          <option
+            *ngFor="let designation of designations"
+            [ngValue]="designation.id"
+          >
+            {{ designation.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Resource Status -->
+      <div class="form-group">
+        <label for="resource_status">
+          Resource Status
+          <span class="text-red-500">*</span>
+        </label>
+
+        <select
+          id="resource_status"
+          [(ngModel)]="employeeForm.resource_status"
+          name="resource_status"
+        >
+          <option [ngValue]="0">
+            Available
+          </option>
+
+          <option [ngValue]="1">
+            Allocated
+          </option>
+
+          <option [ngValue]="2">
+            Partially Available
+          </option>
+
+          <option [ngValue]="3">
+            Unavailable
+          </option>
+        </select>
+      </div>
+
+      <!-- Available From -->
+      <div class="form-group">
+        <label for="available_from">
+          Available From
+        </label>
+
+        <input
+          id="available_from"
+          type="date"
+          [(ngModel)]="employeeForm.available_from"
+          name="available_from"
+        />
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ==================== SKILLS SECTION ==================== -->
+  <div class="border-t border-gray-200 pt-5">
+
+    <!-- Skills Header -->
+    <div class="mb-4 flex items-center justify-between">
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800">
+          Employee Skills
+        </h3>
+
+        <p class="mt-1 text-sm text-gray-500">
+          Add the employee's technical skills, experience and proficiency.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="addSkill()"
+        class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+      >
+        + Add Skill
+      </button>
+
+    </div>
+
+
+    <!-- No Skills -->
+    <div
+      *ngIf="employeeForm.skills.length === 0"
+      class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center"
+    >
+      <p class="text-sm text-gray-500">
+        No skills added yet.
+      </p>
+
+      <button
+        type="button"
+        (click)="addSkill()"
+        class="mt-3 text-sm font-medium text-blue-600 hover:text-blue-700"
+      >
+        + Add the first skill
+      </button>
+    </div>
+
+
+    <!-- Skill Rows -->
+    <div
+      *ngFor="let skill of employeeForm.skills; let i = index"
+      class="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-4"
+    >
+
+      <!-- Skill Row Header -->
+      <div class="mb-4 flex items-center justify-between">
+
+        <h4 class="text-sm font-semibold text-gray-700">
+          Skill {{ i + 1 }}
+        </h4>
+
+        <button
+          type="button"
+          (click)="removeSkill(i)"
+          class="text-sm font-medium text-red-600 hover:text-red-700"
+        >
+          Remove
+        </button>
+
+      </div>
+
+
+      <!-- Skill Fields -->
+      <div class="grid grid-cols-4 gap-4">
+
+        <!-- Skill -->
+        <div class="form-group">
+          <label>
+            Skill
+            <span class="text-red-500">*</span>
+          </label>
+
+          <select
+            [(ngModel)]="skill.skill_id"
+            [name]="'skill_id_' + i"
+          >
+            <option [ngValue]="null">
+              Select Skill
+            </option>
+
+            <option
+              *ngFor="let item of skills"
+              [ngValue]="item.id"
+            >
+              {{ item.name }}
+            </option>
+          </select>
+        </div>
+
+
+        <!-- Skill Type -->
+        <div class="form-group">
+          <label>
+            Skill Type
+            <span class="text-red-500">*</span>
+          </label>
+
+          <select
+            [(ngModel)]="skill.skill_type"
+            [name]="'skill_type_' + i"
+          >
+            <option value="Primary">
+              Primary
+            </option>
+
+            <option value="Secondary">
+              Secondary
+            </option>
+
+            <option value="Tertiary">
+              Tertiary
+            </option>
+          </select>
+        </div>
+
+
+        <!-- Proficiency -->
+        <div class="form-group">
+          <label>
+            Proficiency
+            <span class="text-red-500">*</span>
+          </label>
+
+          <select
+            [(ngModel)]="skill.proficiency"
+            [name]="'proficiency_' + i"
+          >
+            <option [ngValue]="null">
+              Select Proficiency
+            </option>
+
+            <option [ngValue]="1">
+              1 - Beginner
+            </option>
+
+            <option [ngValue]="2">
+              2
+            </option>
+
+            <option [ngValue]="3">
+              3 - Intermediate
+            </option>
+
+            <option [ngValue]="4">
+              4
+            </option>
+
+            <option [ngValue]="5">
+              5 - Expert
+            </option>
+          </select>
+        </div>
+
+
+        <!-- Experience -->
+        <div class="form-group">
+          <label>
+            Experience
+          </label>
+
+          <input
+            type="number"
+            min="0"
+            [(ngModel)]="skill.experience_months"
+            [name]="'experience_months_' + i"
+            placeholder="Months"
+          />
+        </div>
+
+
+        <!-- Certification -->
+        <div class="form-group">
+          <label>
+            Certification
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="skill.certification"
+            [name]="'certification_' + i"
+            placeholder="e.g. AWS Certified"
+          />
+        </div>
+
+
+        <!-- Project Experience -->
+        <div class="form-group">
+          <label>
+            Project Experience
+          </label>
+
+          <input
+            type="number"
+            min="0"
+            [(ngModel)]="skill.project_experience_months"
+            [name]="'project_experience_months_' + i"
+            placeholder="Months"
+          />
+        </div>
+
+
+        <!-- Validation Status -->
+        <div class="form-group">
+          <label>
+            Validation Status
+          </label>
+
+          <select
+            [(ngModel)]="skill.skill_validation_status"
+            [name]="'skill_validation_status_' + i"
+          >
+            <option value="Self">
+              Self
+            </option>
+
+            <option value="Manager">
+              Manager
+            </option>
+
+            <option value="Assessment">
+              Assessment
+            </option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ==================== FORM ACTIONS ==================== -->
+  <div class="mt-6 flex items-center justify-end gap-3 border-t border-gray-200 pt-5">
+
+    <button
+      type="button"
+      (click)="closeEmployeeModal()"
+      class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+    >
+      Cancel
+    </button>
+
+    <button
+      type="button"
+      (click)="saveEmployee()"
+      [disabled]="saving"
+      class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {{ saving ? 'Saving...' : 'Save Employee' }}
+    </button>
+
+  </div>
+
+</div>

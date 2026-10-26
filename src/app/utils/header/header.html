@@ -1,0 +1,224 @@
+<header class="top-header">
+
+  <!-- SEARCH -->
+  <div class="search-box">
+
+    <svg viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7"></circle>
+      <path d="M20 20l-4-4"></path>
+    </svg>
+
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (keyup.enter)="search()"
+      placeholder="Search for people, skills, projects..." />
+
+    <button
+      *ngIf="searchText"
+      class="clear-search"
+      (click)="searchText = ''">
+      ×
+    </button>
+
+  </div>
+
+
+  <!-- HEADER RIGHT -->
+  <div class="header-right">
+
+    <!-- NOTIFICATION -->
+    <div class="notification-container">
+
+      <button
+        class="notification-button"
+        (click)="toggleNotifications()">
+
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9">
+          </path>
+
+          <path d="M10 21h4"></path>
+        </svg>
+
+        <span class="notification-dot"></span>
+
+      </button>
+
+
+      <!-- NOTIFICATION PANEL -->
+      <div
+        *ngIf="notificationOpen"
+        class="notification-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <h3>Notifications</h3>
+            <p>You have 3 new notifications</p>
+          </div>
+
+          <button>
+            Mark all read
+          </button>
+
+        </div>
+
+
+        <div class="notification-item">
+
+          <div class="notification-icon blue">
+            ✓
+          </div>
+
+          <div>
+            <strong>Skill matched</strong>
+            <p>React Developer matched with Frontend Project.</p>
+            <small>10 minutes ago</small>
+          </div>
+
+        </div>
+
+
+        <div class="notification-item">
+
+          <div class="notification-icon green">
+            +
+          </div>
+
+          <div>
+            <strong>New team member</strong>
+            <p>Sarah Johnson joined your team.</p>
+            <small>2 hours ago</small>
+          </div>
+
+        </div>
+
+
+        <div class="notification-item">
+
+          <div class="notification-icon purple">
+            !
+          </div>
+
+          <div>
+            <strong>Skill validation pending</strong>
+            <p>3 employee skills require validation.</p>
+            <small>4 hours ago</small>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- PROFILE -->
+    <div class="profile-container">
+
+      <button
+        class="profile-button"
+        (click)="toggleProfile()">
+
+        <div class="profile-avatar">
+          {{ getInitials(loggedUser?.emp_name) }}
+        </div>
+
+        <div class="profile-info">
+          <strong>{{loggedUser?.emp_name}}</strong>
+          <span>{{loggedUser?.role_name}}</span>
+        </div>
+
+        <svg
+          class="profile-arrow"
+          viewBox="0 0 24 24">
+
+          <path d="M6 9l6 6 6-6"></path>
+
+        </svg>
+
+      </button>
+
+
+      <!-- PROFILE DROPDOWN -->
+      <div
+        *ngIf="profileOpen"
+        class="profile-dropdown">
+
+        <div class="profile-dropdown-header">
+
+          <div class="large-avatar">
+            JD
+          </div>
+
+          <div>
+            <strong>{{loggedUser?.emp_name}}</strong>
+            <span>{{loggedUser?.role_name}}</span>
+            <small>
+              {{loggedUser?.emp_email}}
+            </small>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+
+        <a
+          routerLink="/dashboard/profile"
+          (click)="profileOpen = false"
+          class="profile-menu-item">
+
+          <span class="menu-icon">
+            👤
+          </span>
+
+          <div>
+            <strong>My Profile</strong>
+            <small>View your profile</small>
+          </div>
+
+        </a>
+
+
+        <a
+          routerLink="/dashboard/settings"
+          (click)="profileOpen = false"
+          class="profile-menu-item">
+
+          <span class="menu-icon">
+            ⚙
+          </span>
+
+          <div>
+            <strong>Settings</strong>
+            <small>Account settings</small>
+          </div>
+
+        </a>
+
+
+        <div class="dropdown-divider"></div>
+
+
+        <button
+          class="profile-menu-item logout-item"
+          (click)="logout()">
+
+          <span class="menu-icon">
+            ↪
+          </span>
+
+          <div>
+            <strong>Logout</strong>
+            <small>Sign out of your account</small>
+          </div>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>

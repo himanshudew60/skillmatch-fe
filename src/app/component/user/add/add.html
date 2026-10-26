@@ -1,0 +1,127 @@
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h2>Add User</h2>
+      <p>Create a login account and assign an application role.</p>
+    </div>
+
+    <a routerLink="/dashboard/users" class="back-btn">
+      Back to Users
+    </a>
+  </div>
+
+  <div class="form-card" *ngIf="!loading">
+    <form (ngSubmit)="saveUser()">
+      
+<div class="form-group">
+  <label for="employeeSearch">Select Employee *</label>
+
+  <div class="employee-select">
+    <input
+      id="employeeSearch"
+      type="text"
+      [(ngModel)]="employeeSearch"
+      name="employeeSearch"
+      placeholder="Search or select an employee..."
+      autocomplete="off"
+      (focus)="showEmployeeDropdown = true"
+      (input)="filterEmployees()"
+      (blur)="closeEmployeeDropdown()"
+    />
+
+    <span class="dropdown-arrow">▼</span>
+
+    <div
+      class="employee-dropdown"
+      *ngIf="showEmployeeDropdown"
+    >
+      <button
+        type="button"
+        class="employee-option"
+        *ngFor="let employee of filteredEmployees"
+        (mousedown)="selectEmployee(employee)"
+      >
+        <span class="employee-name">{{ employee.emp_name }}</span>
+        <small>
+          {{ employee.emp_code }} · {{ employee.emp_email }}
+        </small>
+        <small>
+          Department: {{ employee.department_name || '-' }}
+        </small>
+      </button>
+
+      <div
+        class="empty"
+        *ngIf="filteredEmployees.length === 0"
+      >
+        No employees found.
+      </div>
+    </div>
+  </div>
+
+  <div class="selected-employee" *ngIf="selectedEmployee">
+    Selected: <strong>{{ selectedEmployee.emp_name }}</strong>
+    ({{ selectedEmployee.emp_code }})
+
+    <button type="button" (click)="clearEmployee()">
+      Change
+    </button>
+  </div>
+</div>
+
+
+      <div class="form-group">
+        <label>Login ID *</label>
+        <input
+          type="text"
+          [(ngModel)]="userId"
+          name="userId"
+          required
+          maxlength="255"
+          placeholder="Enter a unique login ID"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Role *</label>
+        <select
+          [(ngModel)]="roleId"
+          name="roleId"
+          required
+        >
+          <option [ngValue]="null">Select Role</option>
+          <option *ngFor="let role of roles" [ngValue]="role.id">
+            {{ role.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Password *</label>
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          minlength="8"
+          autocomplete="new-password"
+          placeholder="Minimum 8 characters"
+        />
+      </div>
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+      <div class="form-actions">
+        <a routerLink="/dashboard/users" class="cancel-btn">Cancel</a>
+
+        <button type="submit" [disabled]="saving || loading">
+          {{ saving ? 'Creating...' : 'Create User' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <p *ngIf="loading">Loading...</p>
+</div>

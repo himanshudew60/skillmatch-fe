@@ -1,0 +1,63 @@
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h2>User Management</h2>
+      <p>Manage employee login accounts and assigned roles.</p>
+    </div>
+
+    <a routerLink="/dashboard/users/adduser" class="add-btn">
+      + Add User
+    </a>
+  </div>
+
+  <div class="toolbar">
+    <input
+      type="text"
+      placeholder="Search name, employee code, department or role..."
+      [(ngModel)]="searchText"
+      (input)="filterUsers()"
+    />
+
+    <span>{{ filteredUsers.length }} users</span>
+  </div>
+
+  <p *ngIf="loading">Loading users...</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="table-wrapper" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Employee Code</th>
+          <th>Employee Name</th>
+          <th>Email</th>
+          <th>Department</th>
+          <th>Login ID</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>{{ user.emp_code || '-' }}</td>
+          <td>{{ user.emp_name || 'Employee not linked' }}</td>
+          <td>{{ user.emp_email || '-' }}</td>
+          <td>{{ user.department_name || '-' }}</td>
+          <td>{{ user.user_id }}</td>
+          <td>
+            <span class="role-badge">
+              {{ user.role_name || 'No role' }}
+            </span>
+          </td>
+        </tr>
+
+        <tr *ngIf="filteredUsers.length === 0">
+          <td colspan="6" class="empty">
+            No users found.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,131 @@
+<aside class="sidebar">
+
+  <!-- LOGO -->
+  <div class="logo-section">
+    <div class="logo-icon">
+      <span>AI</span>
+    </div>
+
+    <div class="logo-text">
+      SkillMatch
+      <span>AI</span>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav class="sidebar-nav">
+
+    <!-- DASHBOARD -->
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item">
+
+      <svg viewBox="0 0 24 24">
+        <path d="M3 11.5L12 3l9 8.5"></path>
+        <path d="M5 10v10h14V10"></path>
+        <path d="M9 20v-6h6v6"></path>
+      </svg>
+
+      <span>Dashboard</span>
+    </a>
+
+    <!-- PEOPLE -->
+    <a *ngIf="loggedUser?.role_id=== 1 "
+   routerLink="/dashboard/employees"
+      routerLinkActive="active"
+      class="nav-item">
+
+      <svg viewBox="0 0 24 24">
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M2 21c0-4 3-7 7-7s7 3 7 7"></path>
+        <path d="M17 4a4 4 0 010 7"></path>
+        <path d="M22 21c0-3-2-5-5-6"></path>
+      </svg>
+
+      <span>Employees</span>
+    </a>
+
+    <!-- SKILLS -->
+    <a *ngIf="loggedUser?.role_id=== 1"
+      routerLink="/dashboard/users"
+      routerLinkActive="active"
+      class="nav-item">
+
+      <svg viewBox="0 0 24 24">
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M2 21c0-4 3-7 7-7s7 3 7 7"></path>
+        <path d="M17 4a4 4 0 010 7"></path>
+        <path d="M22 21c0-3-2-5-5-6"></path>
+      </svg>
+
+      <span>Users</span>
+    </a>
+
+    <!-- PROJECTS -->
+    <a
+      routerLink="/dashboard/projects"
+      routerLinkActive="active"
+      class="nav-item">
+
+      <svg viewBox="0 0 24 24">
+        <path d="M3 7h6l2 2h10v10H3z"></path>
+        <path d="M3 7V5h6l2 2"></path>
+      </svg>
+
+      <span>Projects</span>
+    </a>
+
+    <!-- ALLOCATION -->
+    <a
+      routerLink="/dashboard/allocation"
+      routerLinkActive="active"
+      class="nav-item">
+
+      <svg viewBox="0 0 24 24">
+        <path d="M12 3v18"></path>
+        <path d="M3 12h18"></path>
+        <path d="M6 6l12 12"></path>
+        <path d="M18 6L6 18"></path>
+      </svg>
+
+      <span>Allocation</span>
+    </a>
+
+    <!-- REPORTS -->
+    <a
+      routerLink="/dashboard/reports"
+      routerLinkActive="active"
+      class="nav-item">
+
+      <svg viewBox="0 0 24 24">
+        <path d="M4 19V5"></path>
+        <path d="M4 19h16"></path>
+        <path d="M8 16v-5"></path>
+        <path d="M12 16V7"></path>
+        <path d="M16 16v-8"></path>
+      </svg>
+
+      <span>Reports</span>
+    </a>
+
+    <!-- SETTINGS -->
+    <a
+      routerLink="/dashboard/settings"
+      routerLinkActive="active"
+      class="nav-item">
+
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path
+          d="M19.4 15a1.8 1.8 0 000-6l-1-.4a7 7 0 00-.8-1.8l.4-1a1.8 1.8 0 00-4.2-2.4l-.9.5a7 7 0 00-2 0l-.9-.5a1.8 1.8 0 00-4.2 2.4l.4 1a7 7 0 00-.8 1.8l-1 .4a1.8 1.8 0 000 6l1 .4a7 7 0 00.8 1.8l-.4 1a1.8 1.8 0 004.2 2.4l.9-.5a7 7 0 002 0l.9.5a1.8 1.8 0 004.2-2.4l-.4-1a7 7 0 00.8-1.8z">
+        </path>
+      </svg>
+
+      <span>Settings</span>
+    </a>
+
+  </nav>
+
+</aside>

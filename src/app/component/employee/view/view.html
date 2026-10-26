@@ -1,0 +1,171 @@
+
+<div class="employee-page">
+
+  <div class="page-header">
+    <div>
+      <h2>Employee Details</h2>
+      <p>View employee information and skill profile.</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        Back
+      </button>
+
+      <a
+        *ngIf="employee"
+        class="btn btn-primary"
+        [routerLink]="['/dashboard/employees/editemployees', employee.id]"
+      >
+        Edit Employee
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="message">
+    Loading employee details...
+  </div>
+
+  <div *ngIf="!loading && errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="!loading && employee">
+
+    <section class="card">
+      <div class="employee-heading">
+        <div class="avatar">
+          {{ employee.emp_name?.charAt(0)?.toUpperCase() }}
+        </div>
+
+        <div class="employee-title">
+          <h3>{{ employee.emp_name }}</h3>
+          <p>{{ employee.emp_code }}</p>
+        </div>
+
+        <span
+          class="status-badge"
+          [ngClass]="getStatusClass(employee.resource_status)"
+        >
+          {{ getStatusLabel(employee.resource_status) }}
+        </span>
+      </div>
+
+      <h3 class="section-title">Employee Information</h3>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>Employee Code</label>
+          <p>{{ employee.emp_code || '—' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Employee Name</label>
+          <p>{{ employee.emp_name || '—' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Email</label>
+          <p>{{ employee.emp_email || '—' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Department</label>
+          <p>{{ employee.department_name || '—' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Designation</label>
+          <p>{{ employee.designation_name || '—' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Location</label>
+          <p>{{ employee.location || '—' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Available From</label>
+          <p>
+            {{
+              employee.available_from
+                ? (employee.available_from | date:'dd MMM yyyy')
+                : '—'
+            }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="skills-header">
+        <div>
+          <h3>Employee Skills</h3>
+          <p>Skills, proficiency, experience and validation.</p>
+        </div>
+
+        <span class="skill-count">{{ skills.length }} skills</span>
+      </div>
+
+      <div *ngIf="skills.length === 0" class="empty-state">
+        No skills have been added for this employee.
+      </div>
+
+      <div class="table-wrapper" *ngIf="skills.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Skill</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Proficiency</th>
+              <th>Experience</th>
+              <th>Project Experience</th>
+              <th>Validation</th>
+              <th>Certification</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let skill of skills">
+              <td>{{ skill.skill_name || 'Unknown skill' }}</td>
+              <td>{{ skill.skill_category || '—' }}</td>
+              <td>{{ skill.skill_type || '—' }}</td>
+
+              <td>
+                {{
+                  skill.proficiency !== null &&
+                  skill.proficiency !== undefined
+                    ? (skill.proficiency + ' / 5')
+                    : '—'
+                }}
+              </td>
+
+              <td>
+                {{
+                  skill.experience !== null &&
+                  skill.experience !== undefined
+                    ? (skill.experience + ' months')
+                    : '—'
+                }}
+              </td>
+
+              <td>
+                {{
+                  skill.project_experience !== null &&
+                  skill.project_experience !== undefined
+                    ? (skill.project_experience + ' months')
+                    : '—'
+                }}
+              </td>
+
+              <td>{{ skill.skill_validation_status || '—' }}</td>
+              <td>{{ skill.certification || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </ng-container>
+</div>
