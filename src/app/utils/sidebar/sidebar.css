@@ -1,3 +1,4 @@
+
 :host {
   display: block;
   height: 100vh;
@@ -5,7 +6,7 @@
 }
 
 .sidebar {
-  width: 224px;
+  width: 240px;
   height: 100vh;
   flex-shrink: 0;
 
@@ -20,8 +21,16 @@
     );
 
   color: white;
- 
+
+  box-sizing: border-box;
+
+  overflow: hidden;
 }
+
+
+/* ================================
+   LOGO
+================================ */
 
 .logo-section {
   height: 76px;
@@ -32,6 +41,8 @@
   padding: 0 20px;
 
   flex-shrink: 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .logo-icon {
@@ -42,14 +53,26 @@
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
   border-radius: 12px;
 
-  background: rgba(255,255,255,.1);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(96, 165, 250, 0.2),
+      rgba(37, 99, 235, 0.3)
+    );
+
+  border: 1px solid rgba(96, 165, 250, 0.2);
 
   color: #60a5fa;
 
   font-weight: 900;
-  font-size: 15px;
+  font-size: 14px;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .logo-text {
@@ -57,21 +80,83 @@
 
   font-size: 18px;
   font-weight: 700;
+
+  letter-spacing: -0.2px;
+
+  color: #ffffff;
 }
 
 .logo-text span {
+  margin-left: 3px;
+
   color: #60a5fa;
+
+  font-size: 13px;
+  font-weight: 800;
 }
+
+
+/* ================================
+   NAVIGATION
+================================ */
 
 .sidebar-nav {
   flex: 1;
 
-  padding: 14px 12px;
+  padding: 18px 12px;
 
   overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
+
+/* Chrome / Edge scrollbar */
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+
+/* ================================
+   SECTION TITLES
+================================ */
+
+.nav-section-title {
+  padding: 10px 12px 7px;
+
+  margin-top: 8px;
+
+  color: rgba(255, 255, 255, 0.38);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.9px;
+}
+
+.nav-section-title:first-child {
+  margin-top: 0;
+}
+
+
+/* ================================
+   NAV ITEM
+================================ */
+
 .nav-item {
+  position: relative;
+
   height: 44px;
 
   display: flex;
@@ -79,24 +164,30 @@
 
   padding: 0 13px;
 
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 
   border-radius: 9px;
 
-  color: rgba(255,255,255,.78);
+  color: rgba(255, 255, 255, 0.72);
 
   text-decoration: none;
 
   font-size: 14px;
+  font-weight: 500;
 
-  transition: .2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .nav-item svg {
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
 
   margin-right: 13px;
+
+  flex-shrink: 0;
 
   fill: none;
 
@@ -107,24 +198,140 @@
   stroke-linecap: round;
 
   stroke-linejoin: round;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
+
+.nav-item span {
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+/* ================================
+   HOVER
+================================ */
 
 .nav-item:hover {
-  color: white;
+  color: #ffffff;
 
-  background: rgba(255,255,255,.08);
+  background: rgba(255, 255, 255, 0.075);
+
+  transform: translateX(2px);
 }
 
+.nav-item:hover svg {
+  transform: scale(1.05);
+}
+
+
+/* ================================
+   ACTIVE
+================================ */
+
 .nav-item.active {
-  color: white;
+  color: #ffffff;
 
   background:
     linear-gradient(
       90deg,
-      #2563eb,
-      #3159d6
+      #2563eb 0%,
+      #3159d6 100%
     );
 
   box-shadow:
-    0 8px 20px rgba(37,99,235,.25);
+    0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+.nav-item.active svg {
+  color: #ffffff;
+}
+
+
+/* Active left indicator */
+
+.nav-item.active::before {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+
+  width: 3px;
+
+  border-radius: 0 4px 4px 0;
+
+  background: #93c5fd;
+}
+
+
+/* ================================
+   SIDEBAR FOOTER
+================================ */
+
+.sidebar-footer {
+  padding: 13px 15px;
+
+  flex-shrink: 0;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.footer-status {
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 10px;
+
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.045);
+
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 11px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+
+  margin-right: 8px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+
+  box-shadow:
+    0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+
+  .sidebar {
+    width: 220px;
+  }
+
+  .logo-section {
+    padding: 0 16px;
+  }
+
+  .sidebar-nav {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }

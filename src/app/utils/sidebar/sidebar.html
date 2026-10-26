@@ -1,3 +1,4 @@
+
 <aside class="sidebar">
 
   <!-- LOGO -->
@@ -12,120 +13,236 @@
     </div>
   </div>
 
+
   <!-- NAVIGATION -->
   <nav class="sidebar-nav">
+
+    <!-- MAIN -->
+    <div class="nav-section-title">
+      MAIN
+    </div>
 
     <!-- DASHBOARD -->
     <a
       routerLink="/dashboard"
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="nav-item">
-
-      <svg viewBox="0 0 24 24">
-        <path d="M3 11.5L12 3l9 8.5"></path>
-        <path d="M5 10v10h14V10"></path>
-        <path d="M9 20v-6h6v6"></path>
+      class="nav-item"
+    >
+      <!-- Dashboard / Home -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 10.5L12 3l9 7.5"></path>
+        <path d="M5 9.5V21h14V9.5"></path>
+        <path d="M9 21v-7h6v7"></path>
       </svg>
 
       <span>Dashboard</span>
     </a>
 
-    <!-- PEOPLE -->
-    <a *ngIf="loggedUser?.role_id=== 1 "
-   routerLink="/dashboard/employees"
-      routerLinkActive="active"
-      class="nav-item">
 
-      <svg viewBox="0 0 24 24">
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M2 21c0-4 3-7 7-7s7 3 7 7"></path>
-        <path d="M17 4a4 4 0 010 7"></path>
-        <path d="M22 21c0-3-2-5-5-6"></path>
+    <!-- PEOPLE -->
+    <div class="nav-section-title">
+      PEOPLE
+    </div>
+
+    <!-- EMPLOYEES -->
+    <a
+      *ngIf="loggedUser?.role_id === 1"
+      routerLink="/dashboard/employees"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+      <!-- Users / Employees -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="9" cy="8" r="3"></circle>
+        <path d="M3 21c0-3.5 2.7-6 6-6s6 2.5 6 6"></path>
+        <path d="M16 5.5a3 3 0 010 5.5"></path>
+        <path d="M18 15c2 .8 3 2.8 3 6"></path>
       </svg>
 
       <span>Employees</span>
     </a>
 
-    <!-- SKILLS -->
-    <a *ngIf="loggedUser?.role_id=== 1"
+
+    <!-- USERS -->
+    <a
+      *ngIf="loggedUser?.role_id === 1"
       routerLink="/dashboard/users"
       routerLinkActive="active"
-      class="nav-item">
-
-      <svg viewBox="0 0 24 24">
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M2 21c0-4 3-7 7-7s7 3 7 7"></path>
-        <path d="M17 4a4 4 0 010 7"></path>
-        <path d="M22 21c0-3-2-5-5-6"></path>
+      class="nav-item"
+    >
+      <!-- User Account -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="8" r="3.5"></circle>
+        <path d="M5 21c.5-4 3.1-6 7-6s6.5 2 7 6"></path>
+        <path d="M19 5v4"></path>
+        <path d="M17 7h4"></path>
       </svg>
 
       <span>Users</span>
     </a>
 
+
+    <!-- MASTER DATA -->
+    <div class="nav-section-title">
+      MASTER DATA
+    </div>
+
+    <!-- SKILLS -->
+    <a
+      *ngIf="loggedUser?.role_id === 1"
+      routerLink="/dashboard/skills"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+      <!-- Skills / Brain -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9.5 4a3.5 3.5 0 00-3.3 4.7A3.5 3.5 0 004 12a3.5 3.5 0 003 3.4A3.5 3.5 0 0010.5 19"></path>
+        <path d="M14.5 4a3.5 3.5 0 013.3 4.7A3.5 3.5 0 0120 12a3.5 3.5 0 01-3 3.4 3.5 3.5 0 01-3.5 3.6"></path>
+        <path d="M10 4v16"></path>
+        <path d="M14 4v16"></path>
+        <path d="M7 9h3"></path>
+        <path d="M14 9h3"></path>
+        <path d="M7 15h3"></path>
+        <path d="M14 15h3"></path>
+      </svg>
+
+      <span>Skills</span>
+    </a>
+
+
+    <!-- DEPARTMENTS -->
+    <a
+      *ngIf="loggedUser?.role_id === 1"
+      routerLink="/dashboard/departments"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+      <!-- Building / Department -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 21V5l8-3 8 3v16"></path>
+        <path d="M2 21h20"></path>
+        <path d="M8 7h2"></path>
+        <path d="M14 7h2"></path>
+        <path d="M8 11h2"></path>
+        <path d="M14 11h2"></path>
+        <path d="M8 15h2"></path>
+        <path d="M14 15h2"></path>
+        <path d="M10 21v-3h4v3"></path>
+      </svg>
+
+      <span>Departments</span>
+    </a>
+
+
+    <!-- DESIGNATIONS -->
+    <a
+      *ngIf="loggedUser?.role_id === 1"
+      routerLink="/dashboard/designations"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+      <!-- Badge / Job Title -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+        <circle cx="12" cy="9" r="2.5"></circle>
+        <path d="M8 16c.8-2 2.1-3 4-3s3.2 1 4 3"></path>
+      </svg>
+
+      <span>Designations</span>
+    </a>
+
+
+    <!-- PROJECT MANAGEMENT -->
+    <div class="nav-section-title">
+      PROJECT MANAGEMENT
+    </div>
+
     <!-- PROJECTS -->
     <a
       routerLink="/dashboard/projects"
       routerLinkActive="active"
-      class="nav-item">
-
-      <svg viewBox="0 0 24 24">
-        <path d="M3 7h6l2 2h10v10H3z"></path>
-        <path d="M3 7V5h6l2 2"></path>
+      class="nav-item"
+    >
+      <!-- Folder / Projects -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 7.5A2.5 2.5 0 015.5 5H10l2 2h6.5A2.5 2.5 0 0121 9.5v8A2.5 2.5 0 0118.5 20h-13A2.5 2.5 0 013 17.5z"></path>
+        <path d="M3 10h18"></path>
       </svg>
 
       <span>Projects</span>
     </a>
 
-    <!-- ALLOCATION -->
+
+    <!-- PROJECT REQUIREMENTS -->
     <a
       routerLink="/dashboard/requirements"
       routerLinkActive="active"
-      class="nav-item">
-
-      <svg viewBox="0 0 24 24">
-        <path d="M12 3v18"></path>
-        <path d="M3 12h18"></path>
-        <path d="M6 6l12 12"></path>
-        <path d="M18 6L6 18"></path>
+      class="nav-item"
+    >
+      <!-- Clipboard / Requirements -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="5" y="4" width="14" height="17" rx="2"></rect>
+        <path d="M9 4V3h6v1"></path>
+        <path d="M8 9h8"></path>
+        <path d="M8 13h8"></path>
+        <path d="M8 17h5"></path>
       </svg>
 
-      <span>Project Requirment</span>
+      <span>Project Requirements</span>
     </a>
+
+
+    <!-- FUTURE -->
+    <div class="nav-section-title">
+      MANAGEMENT
+    </div>
+
+    <!-- RESOURCE ALLOCATION -->
+    <a
+      routerLink="/dashboard/allocation"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+      <!-- Users / Allocation -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="8" cy="8" r="3"></circle>
+        <circle cx="17" cy="8" r="3"></circle>
+        <path d="M2.5 20c.4-3.5 2.3-5.5 5.5-5.5s5.1 2 5.5 5.5"></path>
+        <path d="M13 15c1-.5 2-.7 3.5-.7 3.2 0 5.1 2 5.5 5.7"></path>
+      </svg>
+
+      <span>Resource Allocation</span>
+    </a>
+
 
     <!-- REPORTS -->
     <a
       routerLink="/dashboard/reports"
       routerLinkActive="active"
-      class="nav-item">
-
-      <svg viewBox="0 0 24 24">
+      class="nav-item"
+    >
+      <!-- Bar Chart / Reports -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M4 19V5"></path>
-        <path d="M4 19h16"></path>
-        <path d="M8 16v-5"></path>
-        <path d="M12 16V7"></path>
-        <path d="M16 16v-8"></path>
+        <path d="M4 19h17"></path>
+        <rect x="8" y="11" width="2.5" height="6" rx=".5"></rect>
+        <rect x="12.5" y="8" width="2.5" height="9" rx=".5"></rect>
+        <rect x="17" y="5" width="2.5" height="12" rx=".5"></rect>
       </svg>
 
       <span>Reports</span>
     </a>
 
-    <!-- SETTINGS -->
-    <a
-      routerLink="/dashboard/settings"
-      routerLinkActive="active"
-      class="nav-item">
-
-      <svg viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path
-          d="M19.4 15a1.8 1.8 0 000-6l-1-.4a7 7 0 00-.8-1.8l.4-1a1.8 1.8 0 00-4.2-2.4l-.9.5a7 7 0 00-2 0l-.9-.5a1.8 1.8 0 00-4.2 2.4l.4 1a7 7 0 00-.8 1.8l-1 .4a1.8 1.8 0 000 6l1 .4a7 7 0 00.8 1.8l-.4 1a1.8 1.8 0 004.2 2.4l.9-.5a7 7 0 002 0l.9.5a1.8 1.8 0 004.2-2.4l-.4-1a7 7 0 00.8-1.8z">
-        </path>
-      </svg>
-
-      <span>Settings</span>
-    </a>
-
   </nav>
+
+
+  <!-- SIDEBAR FOOTER -->
+  <div class="sidebar-footer">
+    <div class="footer-status">
+      <span class="status-dot"></span>
+      <span>AI Matching System</span>
+    </div>
+  </div>
 
 </aside>

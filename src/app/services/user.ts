@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders,HttpParams  } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class User {
-   private apiUrl = 'http://127.0.0.1:8000/api';
+
+  private apiUrl = 'http://127.0.0.1:8000/api';
 
   constructor(private http: HttpClient) {}
 
@@ -27,12 +28,29 @@ export class User {
     );
   }
 
+  getUser(id: number) {
+    return this.http.get<any>(
+      `${this.apiUrl}/users/${id}`,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  deleteUser(id: number) {
+    return this.http.delete<any>(
+      `${this.apiUrl}/users/${id}`,
+      { headers: this.getHeaders() }
+    );
+  }
+
   getAvailableEmployees(search = '') {
     const params = new HttpParams().set('search', search);
 
     return this.http.get<any>(
       `${this.apiUrl}/users/available-employees`,
-      { headers: this.getHeaders(), params }
+      {
+        headers: this.getHeaders(),
+        params
+      }
     );
   }
 
@@ -51,6 +69,22 @@ export class User {
   }) {
     return this.http.post<any>(
       `${this.apiUrl}/users`,
+      payload,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  updateUser(
+    id: number,
+    payload: {
+      employee_id: number;
+      role_id: number;
+      user_id: string;
+      password?: string;
+    }
+  ) {
+    return this.http.put<any>(
+      `${this.apiUrl}/users/${id}`,
       payload,
       { headers: this.getHeaders() }
     );

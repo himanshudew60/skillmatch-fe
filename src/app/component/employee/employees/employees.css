@@ -1,0 +1,430 @@
+.page-container {
+  width: 100%;
+}
+
+/* Main employee card */
+.employee-card {
+  width: 100%;
+  height: 523px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Header */
+.employee-card .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+ 
+  background: #ffffff;
+}
+
+.employee-card .page-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.employee-card .page-header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Header buttons */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.import-btn,
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.import-btn {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.import-btn:hover {
+  background: #15803d;
+}
+
+.add-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.add-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Table wrapper */
+.employee-table-wrapper {
+  height: 455px;
+  overflow: auto;
+  margin: 20px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb
+}
+
+/* Scrollbar */
+.employee-table-wrapper::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.employee-table-wrapper::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.employee-table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.employee-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Table */
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+/* Table header */
+.employee-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #f9fafb;
+}
+
+.employee-table th {
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Table body */
+.employee-table td {
+  padding: 11px 16px;
+  font-size: 13px;
+  color: #4b5563;
+  border-bottom: 1px solid #f1f5f9;
+  white-space: nowrap;
+}
+
+.employee-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.employee-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* Employee code */
+.employee-code {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Status */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status-available {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-allocated {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-partial {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.actions a,
+.actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 9px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+/* View */
+.actions a:first-child {
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+}
+
+.actions a:first-child:hover {
+  background: #dbeafe;
+}
+
+/* Edit */
+.actions a:nth-child(2) {
+  color: #d97706;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+}
+
+.actions a:nth-child(2):hover {
+  background: #fef3c7;
+}
+
+/* Delete */
+.actions button {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+}
+
+.actions button:hover {
+  background: #fee2e2;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 160px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Empty state */
+.empty-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Import modal */
+.import-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Modal */
+.import-modal {
+  width: 450px;
+  max-width: calc(100% - 32px);
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal header */
+.import-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.import-modal-header h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #111827;
+}
+
+/* File section */
+.file-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.file-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #ffffff;
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Selected file */
+.selected-file {
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.selected-file strong {
+  color: #1f2937;
+}
+
+/* Modal actions */
+.import-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.cancel-btn,
+.import-submit-btn {
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.cancel-btn:hover {
+  background: #f9fafb;
+}
+
+.import-submit-btn {
+  background: #16a34a;
+  border: 1px solid #16a34a;
+  color: #ffffff;
+}
+
+.import-submit-btn:hover {
+  background: #15803d;
+}
+
+.import-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .employee-card {
+    height: auto;
+    min-height: 523px;
+  }
+
+  .employee-card .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .import-btn,
+  .add-btn {
+    flex: 1;
+  }
+
+  .employee-table-wrapper {
+    height: 455px;
+  }
+}
+
+@media (max-width: 600px) {
+  .employee-table th,
+  .employee-table td {
+    padding: 9px 10px;
+  }
+
+  .actions {
+    gap: 4px;
+  }
+
+  .actions a,
+  .actions button {
+    padding: 4px 7px;
+  }
+
+  .import-modal {
+    padding: 18px;
+  }
+}

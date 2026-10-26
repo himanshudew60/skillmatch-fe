@@ -22,104 +22,203 @@
 
 .add-btn {
   padding: 10px 16px;
+
   background: #2563eb;
   color: white;
+
   text-decoration: none;
+
   border-radius: 6px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  transition: background 0.2s ease;
 }
 
 .add-btn:hover {
   background: #1d4ed8;
 }
 
+
+/* TABLE */
+
 .table-card {
   background: white;
+
   border: 1px solid #e5e7eb;
+
   border-radius: 10px;
-  overflow: hidden;
+
+  overflow-x: auto;
 }
 
-.data-table {
+table {
   width: 100%;
+
   border-collapse: collapse;
 }
 
-.data-table th,
-.data-table td {
-  padding: 13px 16px;
-  text-align: left;
+th,
+td {
+  padding: 14px 16px;
+
   border-bottom: 1px solid #e5e7eb;
+
+  text-align: left;
 }
 
-.data-table th {
+th {
   background: #f9fafb;
+
   font-size: 13px;
+
+  font-weight: 600;
+
   color: #374151;
 }
 
-.data-table td {
+td {
   font-size: 14px;
+
   color: #4b5563;
 }
 
-.data-table tr:last-child td {
+tbody tr:last-child td {
   border-bottom: none;
 }
 
-.action-link {
-  margin-right: 10px;
-  color: #2563eb;
-  text-decoration: none;
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+
+/* DESIGNATION NAME */
+
+td strong {
+  color: #111827;
+
+  font-weight: 600;
+}
+
+
+/* ACTIONS */
+
+.actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 7px 11px;
+
+  border-radius: 5px;
+
+  font-size: 13px;
+
   cursor: pointer;
+
+  text-decoration: none;
+
+  transition: 0.2s ease;
 }
 
-.action-link:hover {
-  text-decoration: underline;
+
+/* EDIT */
+
+.edit-btn {
+  background: #fef3c7;
+
+  color: #92400e;
 }
 
-.delete-link {
-  color: #dc2626;
+.edit-btn:hover {
+  background: #fde68a;
 }
 
+
+/* DELETE */
+
+.delete-btn {
+  border: none;
+
+  background: #fee2e2;
+
+  color: #b91c1c;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
+
+/* LOADING / EMPTY */
+
+.loading,
 .empty {
   padding: 30px;
+
   text-align: center;
+
   color: #6b7280;
 }
 
-.loading {
-  padding: 30px;
-  text-align: center;
-  color: #6b7280;
-}
+
+/* MESSAGES */
 
 .error,
 .success {
   margin-bottom: 15px;
+
   padding: 10px 12px;
+
   border-radius: 6px;
+
+  font-size: 14px;
 }
 
 .error {
   background: #fee2e2;
+
   color: #b91c1c;
 }
 
 .success {
   background: #dcfce7;
+
   color: #15803d;
 }
 
+
+/* RESPONSIVE */
+
 @media (max-width: 700px) {
+
   .page-container {
     padding: 15px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+
+    gap: 15px;
+
+    flex-direction: column;
+  }
+
+  .add-btn {
+    align-self: flex-start;
   }
 
   .table-card {
     overflow-x: auto;
   }
 
-  .data-table {
-    min-width: 650px;
+  table {
+    min-width: 700px;
   }
 }

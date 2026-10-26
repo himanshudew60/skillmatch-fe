@@ -1,63 +1,205 @@
+<div class="page-container">
 
-<div class="page">
-  <div class="page-header">
-    <div>
-      <h2>User Management</h2>
-      <p>Manage employee login accounts and assigned roles.</p>
+    <!-- Header -->
+    <div class="page-header">
+
+        <div>
+            <h2>User Management</h2>
+            <p>Manage employee login accounts and assigned roles.</p>
+        </div>
+
+        <a
+            routerLink="/dashboard/users/adduser"
+            class="add-btn">
+            + Add User
+        </a>
+
     </div>
 
-    <a routerLink="/dashboard/users/adduser" class="add-btn">
-      + Add User
-    </a>
-  </div>
 
-  <div class="toolbar">
-    <input
-      type="text"
-      placeholder="Search name, employee code, department or role..."
-      [(ngModel)]="searchText"
-      (input)="filterUsers()"
-    />
+    <!-- Search -->
+    <div class="toolbar">
 
-    <span>{{ filteredUsers.length }} users</span>
-  </div>
+        <div class="search-box">
 
-  <p *ngIf="loading">Loading users...</p>
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+            <input
+                type="text"
+                placeholder="Search name, employee code, department or role..."
+                [(ngModel)]="searchText"
+                (input)="filterUsers()" />
 
-  <div class="table-wrapper" *ngIf="!loading">
-    <table>
-      <thead>
-        <tr>
-          <th>Employee Code</th>
-          <th>Employee Name</th>
-          <th>Email</th>
-          <th>Department</th>
-          <th>Login ID</th>
-          <th>Role</th>
-        </tr>
-      </thead>
+        </div>
 
-      <tbody>
-        <tr *ngFor="let user of filteredUsers">
-          <td>{{ user.emp_code || '-' }}</td>
-          <td>{{ user.emp_name || 'Employee not linked' }}</td>
-          <td>{{ user.emp_email || '-' }}</td>
-          <td>{{ user.department_name || '-' }}</td>
-          <td>{{ user.user_id }}</td>
-          <td>
-            <span class="role-badge">
-              {{ user.role_name || 'No role' }}
-            </span>
-          </td>
-        </tr>
+        <span class="user-count">
+            {{ filteredUsers.length }} users
+        </span>
 
-        <tr *ngIf="filteredUsers.length === 0">
-          <td colspan="6" class="empty">
-            No users found.
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    </div>
+
+
+    <!-- Loading -->
+    <div
+        *ngIf="loading"
+        class="loading">
+        Loading users...
+    </div>
+
+
+    <!-- Error -->
+    <div
+        *ngIf="errorMessage"
+        class="alert error">
+        {{ errorMessage }}
+    </div>
+
+
+    <!-- User Table -->
+    <div
+        class="table-card"
+        *ngIf="!loading">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+                        <th>Employee Code</th>
+                        <th>Employee Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Login ID</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr
+                        *ngFor="let user of filteredUsers; let i = index">
+
+                        <!-- Number -->
+                        <td>
+                            {{ i + 1 }}
+                        </td>
+
+
+                        <!-- Employee Code -->
+                        <td>
+
+                            <strong class="employee-code">
+                                {{ user.emp_code || '-' }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Employee Name -->
+                        <td>
+
+                            <strong class="employee-name">
+                                {{ user.emp_name || 'Employee not linked' }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Email -->
+                        <td>
+                            {{ user.emp_email || '-' }}
+                        </td>
+
+
+                        <!-- Department -->
+                        <td>
+                            {{ user.department_name || '-' }}
+                        </td>
+
+
+                        <!-- Login ID -->
+                        <td>
+
+                            <span class="login-id">
+                                {{ user.user_id }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- Role -->
+                        <td>
+
+                            <span
+                                class="role-badge"
+                                [ngClass]="{
+                                    'role-admin': user.role_name === 'System Administrator',
+                                    'role-manager': user.role_name === 'Resource Manager',
+                                    'role-project': user.role_name === 'Project Manager'
+                                }">
+
+                                {{ user.role_name || 'No role' }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Actions -->
+                        <td>
+
+                            <div class="actions">
+
+                               
+
+                                <a
+                                    [routerLink]="[
+                                        '/dashboard/users/edituser',
+                                        user.id
+                                    ]"
+                                    class="edit-btn">
+                                    Edit
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="delete-btn"
+                                    (click)="deleteUser(user.id)">
+                                    Delete
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Empty -->
+                    <tr *ngIf="filteredUsers.length === 0">
+
+                        <td
+                            colspan="8"
+                            class="empty">
+
+                            No users found.
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
 </div>

@@ -145,4 +145,9 @@ export class Employees implements OnInit {
 
       });
   }
+  deleleEmployee(empid:any){
+    this.employeeService.deleteEmployee(empid).subscribe((res:any)=>{
+      this.loadEmployees()
+    })
+  }
 }

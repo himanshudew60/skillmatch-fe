@@ -9,31 +9,43 @@
     </div>
 
     <a
-      routerLink="/dashboard/designations/add"
+      routerLink="/dashboard/designations/addesignations"
       class="add-btn">
       + Add Designation
     </a>
 
   </div>
 
+
+  <!-- SUCCESS MESSAGE -->
   <div *ngIf="successMessage" class="success">
     {{ successMessage }}
   </div>
 
+
+  <!-- ERROR MESSAGE -->
   <div *ngIf="errorMessage" class="error">
     {{ errorMessage }}
   </div>
 
+
+  <!-- LOADING -->
   <div *ngIf="loading" class="loading">
     Loading designations...
   </div>
 
+
+  <!-- EMPTY -->
   <div
     *ngIf="!loading && designations.length === 0"
     class="empty">
+
     No designations found.
+
   </div>
 
+
+  <!-- TABLE -->
   <div
     *ngIf="!loading && designations.length > 0"
     class="table-card">
@@ -49,21 +61,33 @@
         </tr>
       </thead>
 
+
       <tbody>
 
         <tr
           *ngFor="let designation of designations; let i = index">
 
-          <td>{{ i + 1 }}</td>
-
+          <!-- NUMBER -->
           <td>
-            <strong>{{ designation.name }}</strong>
+            {{ i + 1 }}
           </td>
 
+
+          <!-- DESIGNATION -->
+          <td>
+            <strong>
+              {{ designation.name }}
+            </strong>
+          </td>
+
+
+          <!-- DESCRIPTION -->
           <td>
             {{ designation.description || '-' }}
           </td>
 
+
+          <!-- ACTIONS -->
           <td>
 
             <div class="actions">
@@ -74,14 +98,19 @@
                   designation.id
                 ]"
                 class="edit-btn">
+
                 Edit
+
               </a>
+
 
               <button
                 type="button"
                 class="delete-btn"
                 (click)="deleteDesignation(designation.id)">
+
                 Delete
+
               </button>
 
             </div>

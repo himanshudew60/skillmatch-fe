@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../../services/user';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add',
-  imports: [FormsModule,CommonModule,FormsModule],
+  imports: [FormsModule,CommonModule,FormsModule,RouterLink],
   templateUrl: './add.html',
   styleUrl: './add.css',
 })

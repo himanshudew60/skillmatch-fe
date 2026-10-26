@@ -1,0 +1,230 @@
+
+.page {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  margin: 0 0 8px;
+}
+
+.page-header p {
+  color: #64748b;
+  margin: 0;
+}
+
+.back-btn, .cancel-btn {
+  color: #334155;
+  text-decoration: none;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.form-card {
+  max-width: 760px;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  font-weight: 600;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.employee-results {
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.employee-option {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  padding: 12px;
+  text-align: left;
+  background: white;
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
+  cursor: pointer;
+}
+
+.employee-option:hover {
+  background: #f8fafc;
+}
+
+.employee-option span, .employee-option small {
+  color: #64748b;
+}
+
+.selected-employee {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  margin-bottom: 22px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+
+.selected-employee p {
+  margin: 5px 0;
+  color: #64748b;
+}
+
+.remove-btn {
+  align-self: center;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.form-actions button {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc2626;
+}
+
+.success {
+  color: #15803d;
+}
+
+.empty {
+  padding: 12px;
+  color: #64748b;
+}
+
+.employee-select {
+  position: relative;
+  width: 100%;
+}
+
+.employee-select input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 38px 12px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+}
+
+.dropdown-arrow {
+  position: absolute;
+  right: 12px;
+  top: 13px;
+  color: #64748b;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.employee-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.10);
+  z-index: 1000;
+}
+
+.employee-option {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  padding: 12px;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+}
+
+.employee-option:hover {
+  background: #f1f5f9;
+}
+
+.employee-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.employee-option small {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.employee-dropdown .empty {
+  padding: 14px;
+  color: #64748b;
+  text-align: center;
+}
+
+.selected-employee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.selected-employee button {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+

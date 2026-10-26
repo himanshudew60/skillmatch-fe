@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-users',
-  imports: [RouterLink,CommonModule,FormsModule],
+  imports: [RouterLink, CommonModule, FormsModule],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
@@ -17,7 +17,7 @@ export class Users {
   loading = true;
   errorMessage = '';
 
-  constructor(private userService: User) {}
+  constructor(private userService: User) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -55,5 +55,23 @@ export class Users {
         String(value ?? '').toLowerCase().includes(search)
       )
     );
+  }
+  deleteUser(id: any): void {
+
+    const confirmed = confirm('Are you sure you want to delete this user?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.userService.deleteUser(id).subscribe({
+      next: (res: any) => {
+        this.loadUsers();
+      },
+      error: (err: any) => {
+        console.error('Failed to delete user:', err);
+      }
+    });
+
   }
 }

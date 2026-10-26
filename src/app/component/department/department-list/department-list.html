@@ -9,31 +9,43 @@
     </div>
 
     <a
-      routerLink="/dashboard/departments/add"
+      routerLink="/dashboard/departments/addepartments"
       class="add-btn">
       + Add Department
     </a>
 
   </div>
 
+
+  <!-- SUCCESS MESSAGE -->
   <div *ngIf="successMessage" class="success">
     {{ successMessage }}
   </div>
 
+
+  <!-- ERROR MESSAGE -->
   <div *ngIf="errorMessage" class="error">
     {{ errorMessage }}
   </div>
 
+
+  <!-- LOADING -->
   <div *ngIf="loading" class="loading">
     Loading departments...
   </div>
 
+
+  <!-- EMPTY -->
   <div
     *ngIf="!loading && departments.length === 0"
     class="empty">
+
     No departments found.
+
   </div>
 
+
+  <!-- TABLE -->
   <div
     *ngIf="!loading && departments.length > 0"
     class="table-card">
@@ -49,21 +61,33 @@
         </tr>
       </thead>
 
+
       <tbody>
 
         <tr
           *ngFor="let department of departments; let i = index">
 
-          <td>{{ i + 1 }}</td>
-
+          <!-- NUMBER -->
           <td>
-            <strong>{{ department.name }}</strong>
+            {{ i + 1 }}
           </td>
 
+
+          <!-- DEPARTMENT -->
+          <td>
+            <strong>
+              {{ department.name }}
+            </strong>
+          </td>
+
+
+          <!-- DESCRIPTION -->
           <td>
             {{ department.description || '-' }}
           </td>
 
+
+          <!-- ACTIONS -->
           <td>
 
             <div class="actions">
@@ -74,14 +98,19 @@
                   department.id
                 ]"
                 class="edit-btn">
+
                 Edit
+
               </a>
+
 
               <button
                 type="button"
                 class="delete-btn"
                 (click)="deleteDepartment(department.id)">
+
                 Delete
+
               </button>
 
             </div>

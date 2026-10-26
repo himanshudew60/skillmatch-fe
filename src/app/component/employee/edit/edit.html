@@ -8,7 +8,7 @@
 
     <a
       class="btn btn-secondary"
-      (click)="goBack()"
+      routeLink="/dashboard/employees"
     >
       Cancel
     </a>
@@ -217,7 +217,7 @@
     <div class="form-actions">
       <a
         class="btn btn-secondary"
-        [routerLink]="['/dashboard/employees', employeeId]"
+        routerLink="/dashboard/employees"
       >
         Cancel
       </a>
