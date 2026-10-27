@@ -1,0 +1,210 @@
+.page-container {
+  padding: 24px;
+  min-height: 100%;
+  background: #f7f8fc;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.page-header h2 {
+  margin: 0 0 6px;
+  color: #1e293b;
+  font-size: 24px;
+}
+
+.page-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.back-btn,
+.cancel-btn,
+.submit-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.back-btn,
+.cancel-btn {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.submit-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.submit-btn:disabled,
+.cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.details-card,
+.assessment-card,
+.loading-card {
+  margin-bottom: 20px;
+  padding: 22px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+}
+
+.details-card h3,
+.assessment-card h3 {
+  margin: 0 0 20px;
+  color: #1e293b;
+  font-size: 17px;
+}
+
+.details-grid,
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.detail-item label,
+.form-group label,
+.feedback-section label {
+  display: block;
+  margin-bottom: 7px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.detail-item p {
+  margin: 0;
+  color: #1e293b;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.feedback-section {
+  margin-top: 22px;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 7px;
+}
+
+.feedback-section p {
+  margin: 0;
+  color: #334155;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  background: white;
+  color: #1e293b;
+  font: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #2563eb;
+}
+
+.form-group label span {
+  color: #dc2626;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.field-error {
+  display: block;
+  margin-top: 5px;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+.form-note {
+  margin-top: 22px;
+  padding: 13px;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.alert {
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.alert.error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.alert.success {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.loading-card {
+  text-align: center;
+  color: #64748b;
+}
+
+@media (max-width: 700px) {
+  .page-container {
+    padding: 14px;
+  }
+
+  .page-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .details-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}

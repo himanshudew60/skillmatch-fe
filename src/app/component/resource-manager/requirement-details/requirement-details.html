@@ -1,0 +1,88 @@
+<div class="page-container">
+  <button class="back-btn" (click)="back()">← Back to Requirements</button>
+
+  <p *ngIf="loading">Loading project requirement...</p>
+  <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <ng-container *ngIf="!loading && requirement">
+    <div class="page-header">
+      <div>
+        <h2>{{ requirement.project_name }}</h2>
+        <p>{{ requirement.project_code }}</p>
+      </div>
+      <span class="resource-count">
+        {{ requirement.required_resources }} resources required
+      </span>
+    </div>
+
+    <div class="details-card">
+      <h3>Project Details</h3>
+
+      <div class="details-grid">
+        <div>
+          <label>Project Name</label>
+          <p>{{ requirement.project_name || '—' }}</p>
+        </div>
+
+        <div>
+          <label>Project Manager</label>
+          <p>{{ requirement.project_manager_name || '—' }}</p>
+        </div>
+
+        <div>
+          <label>Start Date</label>
+          <p>{{ requirement.start_date ? (requirement.start_date | date:'dd MMM yyyy') : '—' }}</p>
+        </div>
+
+        <div>
+          <label>End Date</label>
+          <p>{{ requirement.end_date ? (requirement.end_date | date:'dd MMM yyyy') : '—' }}</p>
+        </div>
+
+        <div class="full-width">
+          <label>Description</label>
+          <p>{{ requirement.description || requirement.requirement_description || 'No description provided.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-card">
+      <h3>Required Skills</h3>
+
+      <div class="skill-grid">
+        <div class="skill-card" *ngIf="requirement.primary_skill_name">
+          <span>Primary Skill</span>
+          <h4>{{ requirement.primary_skill_name }}</h4>
+          <p>Minimum proficiency: {{ requirement.primary_proficiency }} / 5</p>
+        </div>
+
+        <div class="skill-card" *ngIf="requirement.secondary_skill_name">
+          <span>Secondary Skill</span>
+          <h4>{{ requirement.secondary_skill_name }}</h4>
+          <p>Minimum proficiency: {{ requirement.secondary_proficiency }} / 5</p>
+        </div>
+
+        <div class="skill-card" *ngIf="requirement.tertiary_skill_name">
+          <span>Tertiary Skill</span>
+          <h4>{{ requirement.tertiary_skill_name }}</h4>
+          <p>Minimum proficiency: {{ requirement.tertiary_proficiency }} / 5</p>
+        </div>
+      </div>
+
+      <p class="description">
+        {{ requirement.requirement_description || 'No additional requirement details.' }}
+      </p>
+    </div>
+
+    <div class="action-card">
+      <div>
+        <h3>Find the Best-Matched Employees</h3>
+        <p>Rank eligible employees using skill fit, validated assessments, experience and availability.</p>
+      </div>
+
+      <button class="match-btn" (click)="findCandidates()">
+        Analyze & Recommend Employees
+      </button>
+    </div>
+  </ng-container>
+</div>

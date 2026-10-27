@@ -1,0 +1,153 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h2>L&K Employee Review</h2>
+      <p>Review employee skill profiles and assessment status.</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        (keyup.enter)="searchEmployees()"
+        placeholder="Search employee code, name, email..."
+      />
+
+      <button
+        type="button"
+        class="search-btn"
+        (click)="searchEmployees()">
+        Search
+      </button>
+
+      <button
+        type="button"
+        class="clear-btn"
+        *ngIf="searchText"
+        (click)="clearSearch()">
+        Clear
+      </button>
+    </div>
+
+    <div class="employee-count">
+      {{ employees.length }} Employees
+    </div>
+
+  </div>
+
+  <div
+    class="alert error"
+    *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="table-card">
+
+    <div
+      class="loading"
+      *ngIf="loading">
+      Loading employees...
+    </div>
+
+    <div
+      class="empty"
+      *ngIf="!loading && employees.length === 0">
+
+      No employees found.
+
+    </div>
+
+    <div
+      class="table-wrapper"
+      *ngIf="!loading && employees.length > 0">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Employee Code</th>
+            <th>Employee Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr
+            *ngFor="let employee of employees; let i = index">
+
+            <td>
+              {{ i + 1 }}
+            </td>
+
+            <td>
+              <strong>
+                {{ employee.emp_code }}
+              </strong>
+            </td>
+
+            <td>
+              {{ employee.emp_name }}
+            </td>
+
+            <td>
+              {{ employee.emp_email || '-' }}
+            </td>
+
+            <td>
+              {{ employee.department_name || '-' }}
+            </td>
+
+            <td>
+              {{ employee.designation_name || '-' }}
+            </td>
+
+            <td>
+
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'available': employee.resource_status == 0,
+                  'allocated': employee.resource_status == 1,
+                  'partial': employee.resource_status == 2
+                }">
+
+                {{ getResourceStatus(employee.resource_status) }}
+
+              </span>
+
+            </td>
+
+            <td>
+
+              <button
+                type="button"
+                class="review-btn"
+                (click)="reviewEmployee(employee.id)">
+
+                Review
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>

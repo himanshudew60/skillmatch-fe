@@ -1,0 +1,294 @@
+
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h2>L&amp;K Employee Review</h2>
+      <p>Review employee skills and provide L&amp;K assessment.</p>
+    </div>
+
+    <button type="button" class="back-btn" (click)="cancel()">
+      Back to Employees
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    Loading employee details...
+  </div>
+
+  <!-- Error -->
+  <div class="alert error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Success -->
+  <div class="alert success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <!-- Employee Details -->
+  <div class="employee-card" *ngIf="!loading && employee">
+    <div class="employee-card-header">
+      <h3>Employee Details</h3>
+    </div>
+
+    <div class="employee-grid">
+      <div class="detail-item">
+        <label>Employee Code</label>
+        <span>{{ employee.emp_code || '-' }}</span>
+      </div>
+
+      <div class="detail-item">
+        <label>Employee Name</label>
+        <span>{{ employee.emp_name || '-' }}</span>
+      </div>
+
+      <div class="detail-item">
+        <label>Email</label>
+        <span>{{ employee.emp_email || '-' }}</span>
+      </div>
+
+      <div class="detail-item">
+        <label>Department</label>
+        <span>{{ employee.department_name || '-' }}</span>
+      </div>
+
+      <div class="detail-item">
+        <label>Designation</label>
+        <span>{{ employee.designation_name || '-' }}</span>
+      </div>
+
+      <div class="detail-item">
+        <label>Location</label>
+        <span>{{ employee.location || '-' }}</span>
+      </div>
+
+      <div class="detail-item">
+        <label>Resource Status</label>
+        <span class="status-badge">
+          {{ getResourceStatus(employee.resource_status) }}
+        </span>
+      </div>
+
+      <div class="detail-item">
+        <label>Available From</label>
+        <span>{{ employee.available_from || '-' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills Form: IMPORTANT formGroup wrapper -->
+  <form [formGroup]="reviewForm" *ngIf="!loading">
+
+    <div class="skills-section">
+      <div class="section-header">
+        <div>
+          <h3>Employee Skill Review</h3>
+          <p>Employee skill values are read-only.</p>
+        </div>
+
+        <span class="skill-count">
+          {{ skills.length }} skill(s)
+        </span>
+      </div>
+
+      <div class="table-wrapper" *ngIf="skills.length > 0">
+        <table class="skills-table">
+
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Skill</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Employee Prof.</th>
+              <th>Employee Score</th>
+              <th>L&amp;K Prof.</th>
+              <th>L&amp;K Score</th>
+              <th>Decision</th>
+              <th>Required Prof.</th>
+              <th>Feedback</th>
+            </tr>
+          </thead>
+
+          <tbody formArrayName="skills">
+            <tr
+              *ngFor="let skill of skills; let i = index"
+              [formGroupName]="i"
+            >
+              <td>{{ i + 1 }}</td>
+
+              <td class="skill-name">
+                {{ skill.skill_name || '-' }}
+              </td>
+
+              <td>{{ skill.category || '-' }}</td>
+
+              <td>
+                <span class="skill-type">
+                  {{ skill.skill_type || '-' }}
+                </span>
+              </td>
+
+              <!-- Original employee values: read-only -->
+              <td>
+                <span class="score-value">
+                  {{ skill.proficiency ?? '-' }}
+                </span>
+              </td>
+
+              <td>
+                <span class="score-value">
+                  {{ skill.assessment_score ?? '-' }}
+                </span>
+              </td>
+
+              <!-- L&K assessment fields: Approved only -->
+              <td>
+                <input
+                  *ngIf="getSkillForm(i).get('decision')?.value === 'Approved'"
+                  class="table-input"
+                  type="number"
+                  min="1"
+                  max="5"
+                  step="0.1"
+                  formControlName="lk_proficiency"
+                  placeholder="1–5"
+                />
+                <span
+                  *ngIf="getSkillForm(i).get('decision')?.value !== 'Approved'"
+                  class="not-applicable"
+                >—</span>
+              </td>
+
+              <td>
+                <input
+                  *ngIf="getSkillForm(i).get('decision')?.value === 'Approved'"
+                  class="table-input"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  formControlName="lk_score"
+                  placeholder="0–100"
+                />
+                <span
+                  *ngIf="getSkillForm(i).get('decision')?.value !== 'Approved'"
+                  class="not-applicable"
+                >—</span>
+              </td>
+
+              <!-- Decision -->
+              <td>
+                <select
+                  class="table-select"
+                  formControlName="decision"
+                  (change)="onDecisionChange(i, $any($event.target).value)"
+                >
+                  <option value="Approved">Approved</option>
+                  <option value="Upskill Required">Upskill Required</option>
+                </select>
+              </td>
+
+              <!-- Target proficiency: Upskill only -->
+              <td>
+                <select
+                  *ngIf="getSkillForm(i).get('decision')?.value === 'Upskill Required'"
+                  class="table-select proficiency-select"
+                  formControlName="required_proficiency"
+                >
+                  <option [ngValue]="null">Select</option>
+                  <option [ngValue]="1">1</option>
+                  <option [ngValue]="2">2</option>
+                  <option [ngValue]="3">3</option>
+                  <option [ngValue]="4">4</option>
+                  <option [ngValue]="5">5</option>
+                </select>
+
+                <span
+                  *ngIf="getSkillForm(i).get('decision')?.value !== 'Upskill Required'"
+                  class="not-applicable"
+                >—</span>
+
+                <small
+                  class="field-error"
+                  *ngIf="
+                    getSkillForm(i).get('required_proficiency')?.touched &&
+                    getSkillForm(i).get('required_proficiency')?.invalid
+                  "
+                >
+                  Select level
+                </small>
+              </td>
+
+              <!-- Feedback: Upskill only -->
+              <td>
+                <textarea
+                  *ngIf="getSkillForm(i).get('decision')?.value === 'Upskill Required'"
+                  class="feedback-input"
+                  formControlName="feedback"
+                  rows="3"
+                  maxlength="2000"
+                  placeholder="Skills to improve and feedback"
+                ></textarea>
+
+                <span
+                  *ngIf="getSkillForm(i).get('decision')?.value !== 'Upskill Required'"
+                  class="not-applicable"
+                >—</span>
+
+                <small
+                  class="field-error"
+                  *ngIf="
+                    getSkillForm(i).get('feedback')?.touched &&
+                    getSkillForm(i).get('feedback')?.invalid
+                  "
+                >
+                  Feedback is required.
+                </small>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+      <div class="no-skills" *ngIf="skills.length === 0">
+        No active skills found for this employee.
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="cancel()"
+        [disabled]="submitting"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="btn-warning"
+        (click)="sendToUpskill()"
+        [disabled]="submitting || skills.length === 0"
+      >
+        {{ submitting ? 'Processing...' : 'Send to Upskill' }}
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="submitReview()"
+        [disabled]="submitting || skills.length === 0"
+      >
+        {{ submitting ? 'Processing...' : 'Submit Approved Review' }}
+      </button>
+    </div>
+
+  </form>
+</div>

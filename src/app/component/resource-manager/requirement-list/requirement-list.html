@@ -1,0 +1,75 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Project Requirements</h2>
+      <p>Select a requirement to review its details and find suitable employees.</p>
+    </div>
+
+    <span class="count">{{ requirements.length }} requirements</span>
+  </div>
+
+  <div class="toolbar">
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (keyup.enter)="search()"
+      placeholder="Search project or skill..."
+    />
+
+    <button type="button" (click)="search()">Search</button>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="table-card">
+    <div class="loading" *ngIf="loading">Loading requirements...</div>
+
+    <div class="table-wrapper" *ngIf="!loading">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Project Code</th>
+            <th>Project Name</th>
+            <th>Required Resources</th>
+            <th>Primary Skill</th>
+            <th>Required Level</th>
+            <th>Secondary Skill</th>
+            <th>Required Level</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let item of requirements; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.project_code || '—' }}</td>
+            <td>{{ item.project_name || '—' }}</td>
+            <td>{{ item.required_resources }}</td>
+            <td>{{ item.primary_skill_name || '—' }}</td>
+            <td>{{ item.primary_proficiency ?? '—' }}</td>
+            <td>{{ item.secondary_skill_name || '—' }}</td>
+            <td>{{ item.secondary_proficiency ?? '—' }}</td>
+            <td>
+              <button
+                type="button"
+                class="view-btn"
+                (click)="openRequirement(item.id)"
+              >
+                View & Match
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="requirements.length === 0">
+            <td colspan="9" class="empty">
+              No project requirements found.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

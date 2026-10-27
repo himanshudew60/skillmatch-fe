@@ -1,0 +1,170 @@
+
+<div class="page-container">
+  <button type="button" class="back-btn" (click)="back()">
+    ← Back to Candidates
+  </button>
+
+  <div *ngIf="loading" class="loading">
+    Loading candidate details...
+  </div>
+
+  <div *ngIf="errorMessage" class="alert error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert success">
+    {{ successMessage }}
+
+    <button type="button" (click)="returnToMatching()">
+      Return to Candidate Matching
+    </button>
+  </div>
+
+  <ng-container *ngIf="!loading && candidate && requirement">
+    <div class="page-header">
+      <div>
+        <h2>Candidate Review — Upskill Request</h2>
+        <p>Review the skill gap before referring the employee to L&amp;K.</p>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>Employee Details</h3>
+
+      <div class="details-grid">
+        <div>
+          <label>Employee Name</label>
+          <p>{{ candidate.employee.emp_name }}</p>
+        </div>
+
+        <div>
+          <label>Employee Code</label>
+          <p>{{ candidate.employee.emp_code }}</p>
+        </div>
+
+        <div>
+          <label>Department</label>
+          <p>{{ candidate.employee.department_name || 'N/A' }}</p>
+        </div>
+
+        <div>
+          <label>Designation</label>
+          <p>{{ candidate.employee.designation_name || 'N/A' }}</p>
+        </div>
+
+        <div>
+          <label>AI Match Score</label>
+          <p>{{ candidate.match_score }}%</p>
+        </div>
+
+        <div>
+          <label>Project</label>
+          <p>
+            {{ requirement.project_name || 'Project requirement #' + requirement.id }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>Skill Assessment Summary</h3>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Skill</th>
+              <th>Current Level</th>
+              <th>Project Required Level</th>
+              <th>L&amp;K Decision</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let skill of candidate.skills">
+              <td>{{ skill.skill_name }}</td>
+              <td>{{ skill.actual_proficiency ?? 'Missing' }}</td>
+              <td>{{ skill.required_proficiency }}</td>
+              <td>{{ skill.lk_decision || 'Not available' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <form class="info-card" (ngSubmit)="submitRequest()">
+      <h3>Send Skill Gap to L&amp;K</h3>
+
+      <div class="form-group">
+        <label for="skillId">Skill requiring upskilling *</label>
+
+        <select
+          id="skillId"
+          name="skill_id"
+          [(ngModel)]="form.skill_id"
+          (ngModelChange)="onSkillChange()"
+          required>
+          <option [ngValue]="null" disabled>Select a skill</option>
+
+          <option
+  *ngFor="let skill of candidate.skills"
+  [ngValue]="toNumber(skill.skill_id)">
+  {{ skill.skill_name }}
+  — Current: {{ skill.actual_proficiency ?? 'Missing' }}
+</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="proficiency">Target proficiency *</label>
+
+        <select
+          id="proficiency"
+          name="required_proficiency"
+          [(ngModel)]="form.required_proficiency"
+          required>
+          <option [ngValue]="null" disabled>Select proficiency</option>
+          <option [ngValue]="1">1 — Beginner</option>
+          <option [ngValue]="2">2 — Basic</option>
+          <option [ngValue]="3">3 — Intermediate</option>
+          <option [ngValue]="4">4 — Advanced</option>
+          <option [ngValue]="5">5 — Expert</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="feedback">Reason / feedback for L&amp;K *</label>
+
+        <textarea
+          id="feedback"
+          name="feedback"
+          [(ngModel)]="form.feedback"
+          rows="4"
+          minlength="5"
+          placeholder="Describe the required skill improvement and project expectations..."
+          required>
+        </textarea>
+      </div>
+
+      <div class="notice">
+        This request will be sent to L&amp;K for review. It will not allocate
+        the employee or update their skill profile.
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          [disabled]="submitting || !!successMessage">
+          {{ submitting ? 'Sending Request...' : 'Send to L&K' }}
+        </button>
+
+        <button
+          type="button"
+          class="cancel-btn"
+          (click)="back()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </ng-container>
+</div>

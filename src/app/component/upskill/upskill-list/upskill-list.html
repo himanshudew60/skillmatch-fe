@@ -1,0 +1,102 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Upskill Requests</h2>
+      <p>Review employee upskilling progress and submit assessments.</p>
+    </div>
+
+    <button class="refresh-btn" (click)="loadRequests()">
+      Refresh
+    </button>
+  </div>
+
+  <div class="toolbar">
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search employee, skill or project..."
+      [(ngModel)]="searchText"
+    />
+
+    <span class="request-count">
+      {{ filteredRequests.length }} requests
+    </span>
+  </div>
+
+  <div class="alert error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="table-card">
+    <div class="loading" *ngIf="loading">
+      Loading upskill requests...
+    </div>
+
+    <div class="table-wrapper" *ngIf="!loading">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Employee Code</th>
+            <th>Employee Name</th>
+            <th>Skill</th>
+            <th>Current Level</th>
+            <th>Required Level</th>
+            <th>Project</th>
+            <th>Request Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let request of filteredRequests; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ request.emp_code }}</td>
+            <td>{{ request.emp_name }}</td>
+            <td>{{ request.skill_name }}</td>
+
+            <td>
+              {{ request.current_proficiency ?? 'N/A' }}
+            </td>
+
+            <td>
+              {{ request.required_proficiency }}
+            </td>
+
+            <td>{{ request.project_name || 'N/A' }}</td>
+
+            <td>
+              {{ request.created_at | date:'dd MMM yyyy' }}
+            </td>
+
+            <td>
+              <span class="status-badge">
+                {{ request.status }}
+              </span>
+            </td>
+
+            <td>
+              <button
+                class="assess-btn"
+                (click)="openAssessment(request.id)"
+              >
+                Assess
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredRequests.length === 0">
+            <td colspan="10" class="empty">
+              {{
+                searchText
+                  ? 'No matching upskill requests found.'
+                  : 'No pending upskill requests found.'
+              }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

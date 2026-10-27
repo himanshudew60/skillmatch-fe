@@ -26,12 +26,22 @@ import { DesignationListComponent } from './component/designation/designation-li
 import { AddDesignationComponent } from './component/designation/add/add';
 import { EditDesignationComponent } from './component/designation/edit/edit';
 import { EditUserComponent } from './component/user/edit/edit';
+import { Dash } from './component/dash/dash';
+import { LkEmployeeList } from './component/lk/lk-employee-list/lk-employee-list';
+import { LkEmployeeReview } from './component/lk/lk-employee-review/lk-employee-review';
+import { UpskillList } from './component/upskill/upskill-list/upskill-list';
+import { UpskillAssessment } from './component/upskill/upskill-assessment/upskill-assessment';
+import { RequirementList } from './component/resource-manager/requirement-list/requirement-list';
+import { RequirementDetails } from './component/resource-manager/requirement-details/requirement-details';
+import { CandidateMatching } from './component/resource-manager/candidate-matching/candidate-matching';
+import { CandidateReview } from './component/resource-manager/candidate-review/candidate-review';
 
 export const routes: Routes = [
   { path: '', component: Home },
   {
     path: 'dashboard', component: Dashboard,
     children: [
+      {path:'',component:Dash},
       // employees
       { path: 'employees', component: Employees },
       { path: 'employees/addemployees', component: EmployeeAdd },
@@ -67,8 +77,21 @@ export const routes: Routes = [
       // designations
       { path: 'designations', component: DesignationListComponent },
       { path: 'designations/addesignations', component: AddDesignationComponent },
-      { path: 'designations/editdesignations/:id', component: EditDesignationComponent }
+      { path: 'designations/editdesignations/:id', component: EditDesignationComponent },
      
+      // L&K
+      {path:'lk',component:LkEmployeeList},
+      {path:'lk/review/:id',component:LkEmployeeReview},
+      {path:'upskill',component:UpskillList},
+      {path:'upskill/assessment/:id',component:UpskillAssessment},
+      // reseourcemnager
+      {path:'resource-manager',component:RequirementList},
+      {path:'resource-manager/requirements/:id',component:RequirementDetails},
+      {path:'resource-manager/candidate-matching/:id',component:CandidateMatching},
+      {path:'resource-manager/candidate-review/:id',component:CandidateReview}
+
+
+
     ], canActivate: [authGuard]
   },
   { path: '**', component: Home },

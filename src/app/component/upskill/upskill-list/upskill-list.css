@@ -1,0 +1,156 @@
+.page-container {
+  padding: 24px;
+  background: #f7f8fc;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.page-header h2 {
+  margin: 0 0 6px;
+  color: #1e293b;
+  font-size: 24px;
+}
+
+.page-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.refresh-btn,
+.assess-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.refresh-btn {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.assess-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 360px;
+  max-width: 100%;
+  padding: 11px 13px;
+  border: 1px solid #dbe1ea;
+  border-radius: 7px;
+  outline: none;
+  background: white;
+}
+
+.search-input:focus {
+  border-color: #2563eb;
+}
+
+.request-count {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.table-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow: auto;
+  max-height: 500px;
+}
+
+table {
+  width: 100%;
+  min-width: 1050px;
+  border-collapse: collapse;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f1f5f9;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #edf0f5;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+th {
+  color: #475569;
+  font-weight: 700;
+}
+
+td {
+  color: #334155;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.loading,
+.empty {
+  padding: 28px;
+  text-align: center;
+  color: #64748b;
+}
+
+.alert.error {
+  padding: 12px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 14px;
+  }
+
+  .page-header,
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search-input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

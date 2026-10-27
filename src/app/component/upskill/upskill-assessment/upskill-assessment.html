@@ -1,0 +1,178 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Upskill Assessment</h2>
+      <p>Record the employee's proficiency after upskilling.</p>
+    </div>
+
+    <button type="button" class="back-btn" (click)="cancel()">
+      Back to Requests
+    </button>
+  </div>
+
+  <div class="loading-card" *ngIf="loading">
+    Loading assessment details...
+  </div>
+
+  <div class="alert error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="alert success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <ng-container *ngIf="!loading && request">
+    <div class="details-card">
+      <h3>Employee & Skill Details</h3>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>Employee Code</label>
+          <p>{{ request.emp_code }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Employee Name</label>
+          <p>{{ request.emp_name }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Skill</label>
+          <p>{{ request.skill_name }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Category</label>
+          <p>{{ request.category || 'N/A' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Current Proficiency</label>
+          <p>{{ request.current_proficiency ?? 'N/A' }} / 5</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Required Proficiency</label>
+          <p>{{ request.required_proficiency }} / 5</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Project</label>
+          <p>{{ request.project_name || 'N/A' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <label>Request Status</label>
+          <p>{{ request.status }}</p>
+        </div>
+      </div>
+
+      <div class="feedback-section">
+        <label>Original Upskill Feedback</label>
+        <p>{{ request.lk_remarks || request.resource_manager_feedback || 'No feedback provided.' }}</p>
+      </div>
+    </div>
+
+    <form
+      class="assessment-card"
+      [formGroup]="assessmentForm"
+      (ngSubmit)="submitAssessment()"
+    >
+      <h3>Post-Upskill Assessment</h3>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="assessment_score">
+            Assessment Score (%) <span>*</span>
+          </label>
+
+          <input
+            id="assessment_score"
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            formControlName="assessment_score"
+            placeholder="Enter score from 0 to 100"
+          />
+
+          <small
+            class="field-error"
+            *ngIf="scoreControl?.touched && scoreControl?.invalid"
+          >
+            Enter a score between 0 and 100.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="proficiency">
+            Achieved Proficiency (1–5) <span>*</span>
+          </label>
+
+          <select id="proficiency" formControlName="proficiency">
+            <option value="">Select proficiency</option>
+            <option value="1">1 - Beginner</option>
+            <option value="2">2 - Basic</option>
+            <option value="3">3 - Intermediate</option>
+            <option value="4">4 - Advanced</option>
+            <option value="5">5 - Expert</option>
+          </select>
+
+          <small
+            class="field-error"
+            *ngIf="proficiencyControl?.touched && proficiencyControl?.invalid"
+          >
+            Select a proficiency between 1 and 5.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="skill_type">Skill Type</label>
+
+          <select id="skill_type" formControlName="skill_type">
+            <option value="Primary">Primary</option>
+            <option value="Secondary">Secondary</option>
+            <option value="Tertiary">Tertiary</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="lk_remarks">Assessment Remarks</label>
+
+          <textarea
+            id="lk_remarks"
+            rows="4"
+            maxlength="2000"
+            formControlName="lk_remarks"
+            placeholder="Enter assessment observations or recommendations..."
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-note">
+        Submitting updates the employee's skill profile and returns the
+        employee to the L&K review list for final approval.
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="cancel-btn"
+          (click)="cancel()"
+          [disabled]="submitting"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="submit-btn"
+          [disabled]="submitting || loading"
+        >
+          {{ submitting ? 'Submitting...' : 'Submit Assessment' }}
+        </button>
+      </div>
+    </form>
+  </ng-container>
+</div>
