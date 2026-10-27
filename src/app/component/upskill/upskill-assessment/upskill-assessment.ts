@@ -122,7 +122,7 @@ export class UpskillAssessment implements OnInit {
             res.message || 'Upskill assessment submitted successfully.';
 
           setTimeout(() => {
-            this.router.navigate(['/dashboard/lk/employees']);
+            this.router.navigate(['/dashboard/upskill']);
           }, 1000);
         },
         error: (err: any) => {

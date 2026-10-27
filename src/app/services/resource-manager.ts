@@ -53,18 +53,43 @@ export class ResourceManagerService {
       { headers: this.getHeaders() }
     );
   }
-  sendUpskillRequest(payload: {
+
+sendUpskillRequest(payload: {
   employee_id: number;
   project_requirement_id: number;
-  skill_id: number;
-  required_proficiency: number;
-  feedback: string;
+  skills: {
+    skill_id: number;
+    required_proficiency: number;
+    feedback: string;
+  }[];
 }) {
-  return this.http.post(
+  return this.http.post<any>(
     `${this.apiUrl}/resource-manager/upskill-requests`,
     payload,
-    { headers: this.getHeaders() }
+    {
+      headers: this.getHeaders()
+    }
   );
 }
+
+getAiRecommendations(requirementId: number) {
+  const token = localStorage.getItem('access_token');
+
+  return this.http.post<any>(
+    `${this.apiUrl}/resource-manager/requirements/${requirementId}/ai-recommendations`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+}
+  reviedByManager(id: number) {
+    return this.http.get<any>(
+      `${this.apiUrl}/resource-manager/reviedByManager/${id}`,
+      { headers: this.getHeaders() }
+    );
+  }
 
 }

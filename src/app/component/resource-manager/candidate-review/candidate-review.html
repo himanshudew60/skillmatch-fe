@@ -5,7 +5,7 @@
   </button>
 
   <div *ngIf="loading" class="loading">
-    Loading candidate details...
+    Loading candidate and project requirements...
   </div>
 
   <div *ngIf="errorMessage" class="alert error">
@@ -14,154 +14,282 @@
 
   <div *ngIf="successMessage" class="alert success">
     {{ successMessage }}
-
     <button type="button" (click)="returnToMatching()">
       Return to Candidate Matching
     </button>
   </div>
 
   <ng-container *ngIf="!loading && candidate && requirement">
-    <div class="page-header">
+    <header class="page-header">
       <div>
         <h2>Candidate Review — Upskill Request</h2>
-        <p>Review the skill gap before referring the employee to L&amp;K.</p>
+        <p>
+          Compare project-required skills with the employee's latest
+          L&amp;K assessment and submit multiple skill gaps for review.
+        </p>
       </div>
-    </div>
+    </header>
 
-    <div class="info-card">
-      <h3>Employee Details</h3>
+    <!-- Employee and project summary -->
+    <section class="info-card">
+      <h3>Employee and Project Details</h3>
 
       <div class="details-grid">
         <div>
           <label>Employee Name</label>
-          <p>{{ candidate.employee.emp_name }}</p>
+          <p>{{ candidate.emp_name }}</p>
         </div>
 
         <div>
           <label>Employee Code</label>
-          <p>{{ candidate.employee.emp_code }}</p>
+          <p>{{ candidate.emp_code }}</p>
         </div>
 
         <div>
           <label>Department</label>
-          <p>{{ candidate.employee.department_name || 'N/A' }}</p>
+          <p>{{ candidate.department_name || 'N/A' }}</p>
         </div>
 
         <div>
           <label>Designation</label>
-          <p>{{ candidate.employee.designation_name || 'N/A' }}</p>
+          <p>{{ candidate.designation_name || 'N/A' }}</p>
         </div>
 
         <div>
           <label>AI Match Score</label>
-          <p>{{ candidate.match_score }}%</p>
+          <p>
+            {{ aiRecommendation?.overall_match_percentage ?? 'N/A' }}
+            {{ aiRecommendation ? '%' : '' }}
+          </p>
         </div>
 
         <div>
           <label>Project</label>
           <p>
-            {{ requirement.project_name || 'Project requirement #' + requirement.id }}
+            {{ requirement.project_name || 'Requirement #' + requirementId }}
           </p>
         </div>
-      </div>
-    </div>
 
-    <div class="info-card">
-      <h3>Skill Assessment Summary</h3>
+        <div>
+          <label>Resources Required</label>
+          <p>{{ requirement.required_resources ?? 'N/A' }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actual project requirements -->
+    <section class="info-card">
+      <div class="section-heading">
+        <div>
+          <h3>Project Required Skills</h3>
+          <p>
+            These are the skills and proficiency levels the project requires.
+          </p>
+        </div>
+
+        <span class="count-badge">
+          {{ projectSkills.length }} required skills
+        </span>
+      </div>
+
+      <div class="empty-message" *ngIf="projectSkills.length === 0">
+        No project-required skills were received.
+        Please verify the Laravel API response and project requirement
+        configuration.
+      </div>
+
+      <div class="requirements-list" *ngIf="projectSkills.length > 0">
+        <div
+          class="requirement-row"
+          *ngFor="let skill of projectSkills"
+        >
+          <div class="requirement-skill-info">
+            <strong>{{ skill.skill_name }}</strong>
+            <span class="type-badge">{{ skill.skill_type }}</span>
+          </div>
+
+          <div class="requirement-level">
+            Required proficiency
+            <strong>
+              {{ skill.required_proficiency ?? 'Not specified' }}
+              <ng-container *ngIf="skill.required_proficiency != null">
+                /5
+              </ng-container>
+            </strong>
+          </div>
+
+          <span
+            class="gap-badge"
+            [ngClass]="getSkillStatusClass(skill)"
+          >
+            {{ getSkillStatus(skill) }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Employee's skill evidence -->
+    <section class="info-card">
+      <h3>Employee Skill Assessment</h3>
+      <p class="section-description">
+        L&amp;K proficiency is used to compare the employee with the
+        project's required level.
+      </p>
 
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
               <th>Skill</th>
-              <th>Current Level</th>
-              <th>Project Required Level</th>
+              <th>Type</th>
+              <th>Employee Proficiency</th>
+              <th>Required Proficiency</th>
+              <th>L&amp;K Proficiency</th>
               <th>L&amp;K Decision</th>
+              <th>Gap</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr *ngFor="let skill of candidate.skills">
+            <tr *ngFor="let skill of projectSkills">
               <td>{{ skill.skill_name }}</td>
-              <td>{{ skill.actual_proficiency ?? 'Missing' }}</td>
-              <td>{{ skill.required_proficiency }}</td>
-              <td>{{ skill.lk_decision || 'Not available' }}</td>
+              <td>{{ skill.skill_type }}</td>
+              <td>
+                {{ getEmployeeSkill(skill)?.employee_proficiency ?? 'N/A' }}
+              </td>
+              <td>
+                {{ skill.required_proficiency ?? 'N/A' }}
+              </td>
+              <td>
+                {{ getEmployeeSkill(skill)?.lk_assessment?.lk_proficiency ?? 'N/A' }}
+              </td>
+              <td>
+                {{ getEmployeeSkill(skill)?.lk_assessment?.decision ?? 'No assessment' }}
+              </td>
+              <td>
+                {{ getGap(skill) }}
+              </td>
+            </tr>
+
+            <tr *ngIf="projectSkills.length === 0">
+              <td colspan="7">No project skill requirements available.</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
 
+    <!-- Multiple skill request form -->
     <form class="info-card" (ngSubmit)="submitRequest()">
-      <h3>Send Skill Gap to L&amp;K</h3>
+      <div class="section-heading">
+        <div>
+          <h3>Skills Requiring Upskilling</h3>
+          <p>
+            Select each missing or under-proficient project skill.
+            You can submit several skills in one request.
+          </p>
+        </div>
 
-      <div class="form-group">
-        <label for="skillId">Skill requiring upskilling *</label>
-
-        <select
-          id="skillId"
-          name="skill_id"
-          [(ngModel)]="form.skill_id"
-          (ngModelChange)="onSkillChange()"
-          required>
-          <option [ngValue]="null" disabled>Select a skill</option>
-
-          <option
-  *ngFor="let skill of candidate.skills"
-  [ngValue]="toNumber(skill.skill_id)">
-  {{ skill.skill_name }}
-  — Current: {{ skill.actual_proficiency ?? 'Missing' }}
-</option>
-        </select>
+        <span class="count-badge">
+          {{ selectedSkills.length }} selected
+        </span>
       </div>
 
-      <div class="form-group">
-        <label for="proficiency">Target proficiency *</label>
-
-        <select
-          id="proficiency"
-          name="required_proficiency"
-          [(ngModel)]="form.required_proficiency"
-          required>
-          <option [ngValue]="null" disabled>Select proficiency</option>
-          <option [ngValue]="1">1 — Beginner</option>
-          <option [ngValue]="2">2 — Basic</option>
-          <option [ngValue]="3">3 — Intermediate</option>
-          <option [ngValue]="4">4 — Advanced</option>
-          <option [ngValue]="5">5 — Expert</option>
-        </select>
+      <div class="empty-message" *ngIf="upskillOptions.length === 0">
+        This employee has no identified project skill gaps.
       </div>
 
-      <div class="form-group">
-        <label for="feedback">Reason / feedback for L&amp;K *</label>
+      <div class="upskill-skill-list">
+        <div
+          class="upskill-skill-card"
+          *ngFor="let skill of upskillOptions"
+        >
+          <label class="skill-checkbox-label">
+            <input
+              type="checkbox"
+              [checked]="isSelected(skill.skill_id)"
+              (change)="toggleSkill(skill, $any($event.target).checked)"
+            />
 
-        <textarea
-          id="feedback"
-          name="feedback"
-          [(ngModel)]="form.feedback"
-          rows="4"
-          minlength="5"
-          placeholder="Describe the required skill improvement and project expectations..."
-          required>
-        </textarea>
+            <span class="skill-checkbox-content">
+              <strong>{{ skill.skill_name }}</strong>
+              <small>
+                {{ skill.skill_type }} ·
+                Current L&amp;K level:
+                {{ getEmployeeSkill(skill)?.lk_assessment?.lk_proficiency ?? 'Not assessed' }}
+                · Required:
+                {{ skill.required_proficiency ?? 'Not specified' }}
+              </small>
+            </span>
+          </label>
+
+          <div
+            class="skill-feedback-fields"
+            *ngIf="isSelected(skill.skill_id)"
+          >
+            <div class="form-group">
+              <label [for]="'target-' + skill.skill_id">
+                Target proficiency *
+              </label>
+
+              <select
+                [id]="'target-' + skill.skill_id"
+                [name]="'target-' + skill.skill_id"
+                [ngModel]="getFormSkill(skill.skill_id)?.required_proficiency"
+                (ngModelChange)="updateTarget(skill.skill_id, $event)"
+                required
+              >
+                <option [ngValue]="null" disabled>
+                  Select target proficiency
+                </option>
+                <option [ngValue]="1">1 — Beginner</option>
+                <option [ngValue]="2">2 — Basic</option>
+                <option [ngValue]="3">3 — Intermediate</option>
+                <option [ngValue]="4">4 — Advanced</option>
+                <option [ngValue]="5">5 — Expert</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label [for]="'feedback-' + skill.skill_id">
+                Feedback for L&amp;K *
+              </label>
+
+              <textarea
+                [id]="'feedback-' + skill.skill_id"
+                [name]="'feedback-' + skill.skill_id"
+                rows="3"
+                minlength="5"
+                [ngModel]="getFormSkill(skill.skill_id)?.feedback"
+                (ngModelChange)="updateFeedback(skill.skill_id, $event)"
+                placeholder="Explain the skill gap and the project expectation..."
+                required
+              ></textarea>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="notice">
-        This request will be sent to L&amp;K for review. It will not allocate
-        the employee or update their skill profile.
+        This submits the selected skill gaps for L&amp;K review. It does not
+        allocate the employee or automatically change their assessed skill
+        proficiency. Skills already meeting the project requirement do not
+        need an upskill request.
       </div>
 
       <div class="form-actions">
         <button
           type="submit"
-          [disabled]="submitting || !!successMessage">
-          {{ submitting ? 'Sending Request...' : 'Send to L&K' }}
+          [disabled]="submitting || !!successMessage || selectedSkills.length === 0"
+        >
+          {{ submitting ? 'Sending Requests...' : 'Send Selected Skills to L&K' }}
         </button>
 
         <button
           type="button"
           class="cancel-btn"
-          (click)="back()">
+          (click)="back()"
+        >
           Cancel
         </button>
       </div>

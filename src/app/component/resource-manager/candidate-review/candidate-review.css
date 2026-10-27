@@ -173,3 +173,214 @@ th {
     grid-template-columns: 1fr;
   }
 }
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.section-heading h3 {
+  margin: 0 0 7px;
+}
+
+.section-heading p,
+.section-description {
+  margin: 0 0 14px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.count-badge {
+  padding: 7px 11px;
+  border-radius: 20px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.requirements-list,
+.upskill-skill-list {
+  display: grid;
+  gap: 12px;
+}
+
+.requirement-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.requirement-skill-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.requirement-level {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.requirement-level strong {
+  color: #172033;
+  font-size: 14px;
+}
+
+.type-badge {
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gap-badge {
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gap-met {
+  color: #047857;
+  background: #d1fae5;
+}
+
+.gap-missing {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.gap-below {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.gap-unknown {
+  color: #475569;
+  background: #e2e8f0;
+}
+
+.upskill-skill-card {
+  padding: 17px;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  background: #fff;
+}
+
+.skill-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.skill-checkbox-label input {
+  width: 17px;
+  height: 17px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: #2563eb;
+}
+
+.skill-checkbox-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skill-checkbox-content strong {
+  color: #172033;
+  font-size: 15px;
+}
+
+.skill-checkbox-content small {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.skill-feedback-fields {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(250px, 1.5fr);
+  gap: 16px;
+  margin: 18px 0 0 29px;
+  padding-top: 17px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.skill-feedback-fields .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.skill-feedback-fields label {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.skill-feedback-fields select,
+.skill-feedback-fields textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  font-size: 13px;
+}
+
+.skill-feedback-fields textarea {
+  resize: vertical;
+}
+
+.skill-feedback-fields select:focus,
+.skill-feedback-fields textarea:focus {
+  outline: 2px solid #bfdbfe;
+  border-color: #2563eb;
+}
+
+.empty-message {
+  padding: 15px;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .section-heading {
+    flex-direction: column;
+  }
+
+  .requirement-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .skill-feedback-fields {
+    grid-template-columns: 1fr;
+    margin-left: 0;
+  }
+}

@@ -1,21 +1,35 @@
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ResourceManagerService } from '../../../services/resource-manager';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ResourceManagerService } from '../../../services/resource-manager';
 
 @Component({
   selector: 'app-candidate-matching',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './candidate-matching.html',
   styleUrls: ['./candidate-matching.css']
 })
 export class CandidateMatching implements OnInit {
-  requirement: any = null;
+  requirementId!: number;
+
   candidates: any[] = [];
+  aiRecommendations: any[] = [];
+  requiredSkills: any[] = [];
+
+  project: any = null;
+  aiSummary = '';
+
+  searchTerm = '';
+  sortBy = 'match';
+  selectedRecommendation: any = null;
+
   loading = false;
   errorMessage = '';
+  aiError = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -26,106 +40,277 @@ export class CandidateMatching implements OnInit {
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    if (!id || !Number.isInteger(id)) {
-      this.errorMessage = 'Invalid requirement ID.';
+    if (!Number.isInteger(id) || id <= 0) {
+      this.errorMessage = 'Invalid project requirement ID.';
       return;
     }
 
-    this.loading = true;
+    this.requirementId = id;
+    this.loadRecommendations();
+  }
 
-    this.service.getRecommendations(id).subscribe({
-      next: (res: any) => {
-        this.requirement = res.requirement;
-        this.candidates = res.candidates || [];
+  loadRecommendations(): void {
+    this.loading = true;
+    this.errorMessage = '';
+    this.aiError = '';
+    this.selectedRecommendation = null;
+
+    forkJoin({
+      employeesResponse: this.service.getRecommendations(this.requirementId),
+      aiResponse: this.service.getAiRecommendations(this.requirementId)
+    }).subscribe({
+      next: ({ employeesResponse, aiResponse }: any) => {
+        if (
+          employeesResponse?.success === false ||
+          aiResponse?.success === false
+        ) {
+          this.errorMessage =
+            aiResponse?.message ||
+            employeesResponse?.message ||
+            'Unable to load employee recommendations.';
+          this.loading = false;
+          return;
+        }
+
+        // Use the project and skills returned by the Laravel API.
+        this.project = aiResponse?.project ?? null;
+
+        this.requiredSkills =
+          aiResponse?.required_skills ??
+          aiResponse?.project?.required_skills ??
+          [];
+
+        // The employee endpoint returns L&K-eligible employees.
+        this.candidates = employeesResponse?.employees ?? [];
+
+        const employeesById = new Map<number, any>(
+          this.candidates.map((employee: any) => [
+            Number(employee.employee_id),
+            employee
+          ])
+        );
+
+        const aiData = aiResponse?.ai;
+        this.aiSummary =
+          typeof aiData?.summary === 'string' ? aiData.summary : '';
+
+        this.aiError = aiData?.error ?? '';
+
+        const recommendations = Array.isArray(aiData)
+          ? aiData
+          : Array.isArray(aiData?.recommendations)
+            ? aiData.recommendations
+            : [];
+
+        this.aiRecommendations = recommendations
+          .map((item: any, index: number) => {
+            const employeeId = Number(
+              item.employee_id ??
+              item.employee?.employee_id ??
+              item.employee?.id
+            );
+
+            const employee =
+              item.employee ??
+              employeesById.get(employeeId);
+
+            return {
+              ...item,
+              employee_id: employeeId,
+              rank: item.rank ?? index + 1,
+              employee,
+              // Keep per-candidate required-skill analysis if supplied
+              // by the backend recommendation service.
+              required_skill_matches:
+                item.required_skill_matches ?? []
+            };
+          })
+          .filter((item: any) => !!item.employee)
+          .sort(
+            (a: any, b: any) => Number(a.rank) - Number(b.rank)
+          );
+
         this.loading = false;
       },
       error: (err: any) => {
         this.errorMessage =
-          err.error?.message || 'Failed to generate recommendations.';
+          err?.error?.message ||
+          'Failed to load recommendations. Please try again.';
         this.loading = false;
       }
     });
   }
-  selectedCandidate: any = null;
-submittingUpskill = false;
 
-upskillForm = {
-  skill_id: null as number | null,
-  required_proficiency: 3,
-  feedback: ''
-};
+  get filteredRecommendations(): any[] {
+    const term = this.searchTerm.trim().toLowerCase();
 
-requestUpskill(candidate: any): void {
-  this.router.navigate(
-    ['/dashboard/resource-manager/candidate-review', candidate.employee.id],
-    {
-      state: {
-        candidate: candidate,
-        requirement: this.requirement
-      },
-      queryParams: {
-        action: 'upskill',
-        requirementId: this.requirement.id
+    const filtered = this.aiRecommendations.filter((item: any) => {
+      const employee = item.employee;
+
+      const employeeSkills = (employee?.skills ?? [])
+        .map((skill: any) => skill.skill_name);
+
+      const requiredSkillNames = this.requiredSkills
+        .map((skill: any) => skill.skill_name);
+
+      const searchable = [
+        employee?.emp_name,
+        employee?.emp_code,
+        employee?.designation_name,
+        employee?.department_name,
+        ...employeeSkills,
+        ...requiredSkillNames
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return searchable.includes(term);
+    });
+
+    return [...filtered].sort((a: any, b: any) => {
+      if (this.sortBy === 'name') {
+        return (a.employee?.emp_name ?? '').localeCompare(
+          b.employee?.emp_name ?? ''
+        );
       }
-    }
-  );
-}
 
-closeUpskillRequest(): void {
-  this.selectedCandidate = null;
-}
+      if (this.sortBy === 'rating') {
+        return this.ratingValue(b.rating) - this.ratingValue(a.rating);
+      }
 
-submitUpskillRequest(): void {
-  if (
-    !this.selectedCandidate ||
-    !this.upskillForm.skill_id ||
-    !this.upskillForm.feedback.trim()
-  ) {
-    alert('Please select a skill and enter feedback.');
-    return;
+      return (
+        Number(b.overall_match_percentage ?? 0) -
+        Number(a.overall_match_percentage ?? 0)
+      );
+    });
   }
 
-  this.submittingUpskill = true;
+  private ratingValue(rating: string): number {
+    const values: Record<string, number> = {
+      'Excellent Match': 4,
+      'Strong Match': 3,
+      'Partial Match': 2,
+      'Low Match': 1
+    };
 
-  const payload = {
-    employee_id: this.selectedCandidate.employee.id,
-    project_requirement_id: this.requirement.id,
-    skill_id: this.upskillForm.skill_id,
-    required_proficiency: this.upskillForm.required_proficiency,
-    feedback: this.upskillForm.feedback.trim()
-  };
+    return values[rating] ?? 0;
+  }
 
-  this.service
-    .sendUpskillRequest(payload)
-    .subscribe({
-      next: () => {
-        alert('Upskill request sent to L&K successfully.');
-        this.selectedCandidate = null;
-        this.submittingUpskill = false;
-      },
-      error: (error: any) => {
-        console.error('Upskill request failed:', error);
-        alert(
-          error?.error?.message ||
-          'Unable to send the upskill request. Please try again.'
-        );
-        this.submittingUpskill = false;
+  viewAnalysis(item: any): void {
+    this.selectedRecommendation =
+      this.selectedRecommendation?.employee_id === item.employee_id
+        ? null
+        : item;
+  }
+
+  /**
+   * Find the employee's skill corresponding to a project-required skill.
+   * Skill IDs are compared, not names, to avoid false matches.
+   */
+  getEmployeeSkill(employee: any, requiredSkill: any): any | null {
+    return (employee?.skills ?? []).find(
+      (skill: any) =>
+        Number(skill.skill_id) === Number(requiredSkill.skill_id)
+    ) ?? null;
+  }
+
+  /**
+   * Explain the employee's status for each required project skill.
+   * The employee must have the required skill and sufficient L&K
+   * proficiency to satisfy the requirement.
+   */
+  getRequiredSkillStatus(employee: any, requiredSkill: any): string {
+    const employeeSkill = this.getEmployeeSkill(employee, requiredSkill);
+
+    if (!employeeSkill) {
+      return 'Missing required skill';
+    }
+
+    const assessment = employeeSkill.lk_assessment;
+
+    if (
+      !assessment ||
+      String(assessment.decision ?? '').trim().toLowerCase() !== 'approved'
+    ) {
+      return 'L&K evidence unavailable';
+    }
+
+    if (
+      requiredSkill.required_proficiency != null &&
+      (
+        assessment.lk_proficiency == null ||
+        Number(assessment.lk_proficiency) <
+          Number(requiredSkill.required_proficiency)
+      )
+    ) {
+      return 'Below required proficiency';
+    }
+
+    return 'Requirement met';
+  }
+
+  getRequiredSkillStatusClass(employee: any, requiredSkill: any): string {
+    const status = this.getRequiredSkillStatus(employee, requiredSkill);
+
+    switch (status) {
+      case 'Requirement met':
+        return 'skill-status-met';
+      case 'Missing required skill':
+        return 'skill-status-missing';
+      case 'Below required proficiency':
+        return 'skill-status-below';
+      default:
+        return 'skill-status-unknown';
+    }
+  }
+
+  getMatchedRequiredSkillCount(employee: any): number {
+    return this.requiredSkills.filter(
+      (skill: any) =>
+        this.getRequiredSkillStatus(employee, skill) === 'Requirement met'
+    ).length;
+  }
+
+  getEmployeeSkillCount(employee: any): number {
+    return (employee?.skills ?? []).length;
+  }
+
+  requestUpskill(item: any): void {
+    const employee = item.employee ?? item;
+    const employeeId = Number(employee.employee_id ?? employee.id);
+
+    if (!employeeId || !this.requirementId) {
+      console.error('Missing employee or requirement ID', item);
+      return;
+    }
+
+    this.router.navigate(
+      ['/dashboard/resource-manager/candidate-review', employeeId],
+      {
+        state: {
+          candidate: employee,
+          aiRecommendation: item.employee ? item : null,
+          requirement: this.project
+            ? {
+                ...this.project,
+                id: this.project.requirement_id ?? this.requirementId
+              }
+            : { id: this.requirementId }
+        },
+        queryParams: {
+          requirementId: this.requirementId,
+          action: 'upskill'
+        }
       }
-    });
-}
+    );
+  }
+
+  reviewVerify(item: any): void {
+    alert(item.employee)
+  }
 
   back(): void {
-    this.router.navigate([
-      '/dashboard/resource-manager'
-    ]);
-  }
-
-  reviewCandidate(candidate: any): void {
-    // Candidate-review and allocation-decision APIs can be connected next.
-    alert(
-      `${candidate.employee.emp_name}\n` +
-      `Match score: ${candidate.match_score}%\n` +
-      `Eligible: ${candidate.eligible ? 'Yes' : 'No'}`
-    );
+    this.router.navigate(['/dashboard/resource-manager']);
   }
 }

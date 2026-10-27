@@ -1,188 +1,482 @@
 <div class="page-container">
-  <button class="back-btn" (click)="back()">← Back to Requirement</button>
+    <button class="back-btn" type="button" (click)="back()">
+        ← Back
+    </button>
 
-  <div *ngIf="loading" class="loading">
-    Analyzing employee skills and assessment evidence...
+    <div *ngIf="loading" class="loading">
+        <span class="spinner"></span>
+        Loading approved employees and generating AI analysis...
+    </div>
+
+    <div *ngIf="errorMessage && !loading" class="error">
+        {{ errorMessage }}
+        <button type="button" (click)="loadRecommendations()">Retry</button>
+    </div>
+
+    <ng-container *ngIf="!loading && !errorMessage">
+        <header class="page-header">
+            <div>
+                <div class="eyebrow">RESOURCE MANAGEMENT / AI</div>
+                <h1>AI Resource Recommendations</h1>
+                <p>
+                    Project-specific employee matching based on requirements,
+                    employee skills and the latest L&amp;K assessments.
+                </p>
+            </div>
+
+            <button class="refresh-btn" type="button" (click)="loadRecommendations()">
+                ↻ Refresh analysis
+            </button>
+        </header>
+
+
+        <section class="project-panel" *ngIf="project">
+            <div class="project-icon">AI</div>
+            <div class="project-info">
+                <span class="muted-label">PROJECT REQUIREMENT</span>
+                <h2>{{ project.project_name || 'Selected project' }}</h2>
+                <p>{{ project.requirement_description || 'No description provided.' }}</p>
+            </div>
+            <div class="project-meta">
+                <span>Requirement #{{ requirementId }}</span>
+                <strong>{{ project.required_resources ?? '—' }} resources</strong>
+            </div>
+        </section>
+        
+<!-- Project Required Skills -->
+<section class="project-requirements-card" *ngIf="project">
+  <div class="requirements-header">
+    <div>
+      <span class="eyebrow">PROJECT CRITERIA</span>
+      <h2>Required Skills</h2>
+      <p>Compare every candidate against these project requirements.</p>
+    </div>
+
+    <div class="resource-count">
+      <strong>{{ project.required_resources ?? 0 }}</strong>
+      <span>Resources needed</span>
+    </div>
   </div>
 
-  <div *ngIf="errorMessage" class="error">
-    {{ errorMessage }}
+  <div class="requirements-empty" *ngIf="requiredSkills.length === 0">
+    <strong>No required skills returned by the API</strong>
+    <p>
+      Check the Laravel response for
+      <code>project.required_skills</code> or
+      <code>required_skills</code>. The requirement may not have any skill
+      IDs configured, or the API may be using different column names.
+    </p>
   </div>
 
-  <ng-container *ngIf="!loading && requirement">
-    <div class="page-header">
-      <div>
-        <h2>Candidate Recommendations</h2>
+  <div class="required-skills-list" *ngIf="requiredSkills.length > 0">
+    <div class="required-skill-item" *ngFor="let skill of requiredSkills">
+      <div class="required-skill-info">
+        <div class="required-skill-title">
+          <h3>{{ skill.skill_name }}</h3>
+          <span class="required-type">{{ skill.skill_type }}</span>
+        </div>
+
         <p>
-          {{ requirement.project_name }} ·
-          {{ requirement.project_code }}
+          Required proficiency:
+          <strong>
+            {{ skill.required_proficiency ?? 'Not specified' }}
+            <ng-container *ngIf="skill.required_proficiency != null">
+              /5
+            </ng-container>
+          </strong>
         </p>
       </div>
 
-      <div class="resource-count">
-        {{ requirement.required_resources }} resources required
-      </div>
+      <span class="required-label">Required</span>
     </div>
+  </div>
+</section>
 
-    <div class="notice">
-      Candidates are ranked using skill coverage, proficiency fit,
-      experience, assessment evidence and availability. Final selection
-      remains a human decision.
-    </div>
 
-    <div class="candidate-card" *ngFor="let candidate of candidates">
-      <div class="candidate-header">
+        <div *ngIf="aiSummary" class="ai-summary">
+            <div class="ai-summary-icon">✦</div>
+            <div>
+                <h3>AI overview</h3>
+                <p>{{ aiSummary }}</p>
+            </div>
+        </div>
+
+        <div *ngIf="aiError" class="error">
+            {{ aiError }}
+        </div>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-icon">♙</span>
+                <div>
+                    <span class="stat-label">Eligible employees</span>
+                    <strong>{{ candidates.length }}</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">✦</span>
+                <div>
+                    <span class="stat-label">AI recommendations</span>
+                    <strong>{{ aiRecommendations.length }}</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">✓</span>
+                <div>
+                    <span class="stat-label">L&amp;K eligible</span>
+                    <strong>{{ candidates.length }}</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-card">
+            <div class="table-toolbar">
+                <div>
+                    <h2>Recommended employees</h2>
+                    <p>Compare AI match scores, ratings and skill evidence.</p>
+                </div>
+
+                <div class="toolbar-controls">
+                    <div class="search-box">
+                        <span>⌕</span>
+                        <input type="text" [(ngModel)]="searchTerm" placeholder="Search employee or skill..."
+                            aria-label="Search employees" />
+                    </div>
+
+                    <select [(ngModel)]="sortBy" aria-label="Sort recommendations">
+                        <option value="match">Highest match</option>
+                        <option value="rating">Best rating</option>
+                        <option value="name">Employee name</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Employee</th>
+                            <th>Skills</th>
+                            <th>AI match</th>
+                            <th>Skill match</th>
+                            <th>Experience</th>
+                            <th>L&amp;K status</th>
+                            <th>AI rating</th>
+                            <th class="actions-heading">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <ng-container *ngFor="let item of filteredRecommendations">
+                            <tr [class.selected-row]="selectedRecommendation?.employee_id === item.employee_id">
+                                <td>
+                                    <span class="rank-badge">#{{ item.rank }}</span>
+                                </td>
+
+                                <td>
+                                    <div class="employee-cell">
+                                        <div class="avatar">
+                                            {{ item.employee.emp_name?.charAt(0) || 'E' }}
+                                        </div>
+                                        <div class="employee-details">
+                                            <strong>{{ item.employee.emp_name }}</strong>
+                                            <span>{{ item.employee.emp_code }}</span>
+                                            <small>
+                                                {{ item.employee.designation_name || 'No designation' }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="skill-tags">
+                                        <span class="skill-tag" *ngFor="let skill of item.employee.skills">
+                                            {{ skill.skill_name }}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="match-cell">
+                                        <strong>{{ item.overall_match_percentage }}%</strong>
+                                        <div class="progress-track">
+                                            <div class="progress-fill"
+                                                [style.width]="item.overall_match_percentage + '%'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>{{ item.skill_match_percentage }}%</td>
+                                <td>{{ item.experience_match_percentage }}%</td>
+
+                                <td>
+                                    <span class="status-badge">
+                                        <span class="status-dot"></span>
+                                        L&amp;K approved
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="rating-badge" [ngClass]="{
+                          'rating-excellent': item.rating === 'Excellent Match',
+                          'rating-strong': item.rating === 'Strong Match',
+                          'rating-partial': item.rating === 'Partial Match',
+                          'rating-low': item.rating === 'Low Match'
+                        }">
+                                        {{ item.rating }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="action-buttons">
+                                        <button type="button" class="icon-action" (click)="viewAnalysis(item)">
+                                            {{ selectedRecommendation?.employee_id === item.employee_id
+                                            ? 'Hide' : 'View analysis' }}
+                                        </button>
+
+                                        <button type="button" class="revert-btn" (click)="requestUpskill(item)">
+                                            Revert to L&amp;K
+                                        </button>
+
+                                        <button type="button" class="verify-btn" (click)="reviewVerify(item.employee)">
+                                            Review &amp; Verify
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr *ngIf="selectedRecommendation?.employee_id === item.employee_id">
+                                <td colspan="9" class="detail-cell">
+                                    <div class="analysis-panel">
+                                        <div class="analysis-header">
+                                            <div>
+                                                <span class="eyebrow">AI EMPLOYEE ANALYSIS</span>
+                                                <h3>{{ item.employee.emp_name }}</h3>
+                                                <p>
+                                                    {{ item.employee.department_name || 'No department' }}
+                                                    · {{ item.employee.location || 'No location' }}
+                                                </p>
+                                            </div>
+
+                                            <div class="confidence">
+                                                <span>AI confidence</span>
+                                                <strong>{{ item.confidence || 'Not specified' }}</strong>
+                                            </div>
+                                        </div>
+
+                                        <div class="metric-grid">
+                                            <div class="metric-card">
+                                                <span>Overall match</span>
+                                                <strong>{{ item.overall_match_percentage }}%</strong>
+                                            </div>
+                                            <div class="metric-card">
+                                                <span>Skill coverage</span>
+                                                <strong>{{ item.skill_match_percentage }}%</strong>
+                                            </div>
+                                            <div class="metric-card">
+                                                <span>Proficiency match</span>
+                                                <strong>{{ item.proficiency_match_percentage }}%</strong>
+                                            </div>
+                                            <div class="metric-card">
+                                                <span>Experience match</span>
+                                                <strong>{{ item.experience_match_percentage }}%</strong>
+                                            </div>
+                                            <div class="metric-card">
+                                                <span>L&amp;K evidence</span>
+                                                <strong>{{ item.lk_evidence_percentage }}%</strong>
+                                            </div>
+                                            <div class="metric-card">
+                                                <span>Availability</span>
+                                                <strong>{{ item.availability_match_percentage }}%</strong>
+                                            </div>
+                                        </div>
+
+                                        <div class="analysis-columns">
+                                            <div class="analysis-section">
+                                                <h4>AI feedback</h4>
+                                                <p>{{ item.feedback || 'No additional feedback provided.' }}</p>
+                                            </div>
+
+                                            <div class="analysis-section">
+                                                <h4>Strengths</h4>
+                                                <ul *ngIf="item.strengths?.length; else noStrengths">
+                                                    <li *ngFor="let strength of item.strengths">
+                                                        {{ strength }}
+                                                    </li>
+                                                </ul>
+                                                <ng-template #noStrengths>
+                                                    <p>No strengths identified.</p>
+                                                </ng-template>
+                                            </div>
+
+                                            <div class="analysis-section">
+                                                <h4>Skill gaps and risks</h4>
+                                                <ul *ngIf="item.gaps?.length; else noGaps">
+                                                    <li *ngFor="let gap of item.gaps">{{ gap }}</li>
+                                                </ul>
+                                                <ng-template #noGaps>
+                                                    <p>No specific gaps identified.</p>
+                                                </ng-template>
+                                            </div>
+
+                                            <div class="analysis-section">
+                                                <h4>Additional recommendations</h4>
+                                                <ul *ngIf="item.additional_recommendations?.length; else noExtra">
+                                                    <li *ngFor="let advice of item.additional_recommendations">
+                                                        {{ advice }}
+                                                    </li>
+                                                </ul>
+                                                <ng-template #noExtra>
+                                                    <p>No additional recommendations provided.</p>
+                                                </ng-template>
+                                            </div>
+                                        </div>
+                                        
+<div class="required-skill-analysis">
+  <h4>Project requirement match</h4>
+  <p class="section-help">
+    Only the skills specified by the project count toward satisfying
+    its requirements. Other employee skills are additional skills.
+  </p>
+
+  <div class="candidate-skill-summary">
+    <strong>
+      {{ getMatchedRequiredSkillCount(item.employee) }}
+      of {{ requiredSkills.length }} required skills met
+    </strong>
+  </div>
+
+  <div class="required-skill-comparison" *ngIf="requiredSkills.length > 0">
+    <div
+      class="comparison-item"
+      *ngFor="let requiredSkill of requiredSkills"
+    >
+      <div class="comparison-main">
         <div>
-          <h3>{{ candidate.employee.emp_name }}</h3>
-          <p>
-            {{ candidate.employee.emp_code }} ·
-            {{ candidate.employee.designation_name || 'No designation' }} ·
-            {{ candidate.employee.department_name || 'No department' }}
-          </p>
+          <strong>{{ requiredSkill.skill_name }}</strong>
+          <span class="comparison-type">
+            {{ requiredSkill.skill_type }}
+          </span>
         </div>
 
-        <div class="score">
-          <strong>{{ candidate.match_score }}%</strong>
-          <span>Match score</span>
-        </div>
+        <span
+          class="skill-status"
+          [ngClass]="getRequiredSkillStatusClass(item.employee, requiredSkill)"
+        >
+          {{ getRequiredSkillStatus(item.employee, requiredSkill) }}
+        </span>
       </div>
 
-      <div class="eligibility" [class.eligible]="candidate.eligible">
-        {{ candidate.eligible
-          ? 'Eligible for consideration'
-          : 'Skill or approval gap' }}
-      </div>
+      <ng-container
+        *ngIf="getEmployeeSkill(item.employee, requiredSkill) as employeeSkill"
+      >
+        <p>
+          Required proficiency:
+          <strong>
+            {{ requiredSkill.required_proficiency ?? 'Not specified' }}
+          </strong>
+          <span class="comparison-separator">·</span>
+          Employee-reported proficiency:
+          <strong>
+            {{ employeeSkill.employee_proficiency ?? 'N/A' }}
+          </strong>
+          <span class="comparison-separator">·</span>
+          L&amp;K proficiency:
+          <strong>
+            {{ employeeSkill.lk_assessment?.lk_proficiency ?? 'N/A' }}
+          </strong>
+        </p>
+      </ng-container>
 
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Skill</th>
-              <th>Required Level</th>
-              <th>Employee Level</th>
-              <th>Employee Score</th>
-              <th>L&amp;K Score</th>
-              <th>L&amp;K Decision</th>
-              <th>Experience (Months)</th>
-              <th>Skill Qualified</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr *ngFor="let skill of candidate.skills">
-              <td>{{ skill.skill_name }}</td>
-              <td>{{ skill.required_proficiency }}</td>
-              <td>{{ skill.actual_proficiency ?? 'Missing' }}</td>
-              <td>{{ skill.employee_score ?? 'N/A' }}</td>
-              <td>{{ skill.lk_score ?? 'N/A' }}</td>
-              <td>{{ skill.lk_decision }}</td>
-              <td>{{ skill.experience_months ?? 'N/A' }}</td>
-              <td>
-                <span
-                  [class.pass]="skill.qualified"
-                  [class.fail]="!skill.qualified">
-                  {{ skill.qualified ? 'Yes' : 'No' }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="explanation">
-        <h4>Why this candidate was ranked this way</h4>
-        <ul>
-          <li *ngFor="let reason of candidate.explanations">
-            {{ reason }}
-          </li>
-        </ul>
-      </div>
-
-      <!-- Keep this action block only once inside the candidate loop -->
-      <div class="candidate-actions">
-        <button
-          type="button"
-          [disabled]="!candidate.eligible"
-          (click)="reviewCandidate(candidate)">
-          Review &amp; Select
-        </button>
-
-        <button
-    type="button"
-    (click)="requestUpskill(candidate)">
-    Request Upskill → L&K
-  </button>
-      </div>
-    </div>
-
-    <div class="empty" *ngIf="candidates.length === 0">
-      No employees found for matching.
-    </div>
-
-    <!-- Upskill form appears here, outside the candidate loop -->
-    <div class="upskill-panel" *ngIf="selectedCandidate">
-      <h3>Request Upskilling</h3>
-
-      <p>
-        Employee:
-        <strong>{{ selectedCandidate.employee.emp_name }}</strong>
-        ({{ selectedCandidate.employee.emp_code }})
+      <p *ngIf="!getEmployeeSkill(item.employee, requiredSkill)">
+        This employee does not have the required
+        {{ requiredSkill.skill_name }} skill recorded.
       </p>
-
-      <form (ngSubmit)="submitUpskillRequest()">
-        <label for="skillId">Skill requiring upskilling</label>
-
-        <select
-          id="skillId"
-          name="skillId"
-          [(ngModel)]="upskillForm.skill_id"
-          required>
-          <option [ngValue]="null" disabled>Select a skill</option>
-          <option
-            *ngFor="let skill of selectedCandidate.skills"
-            [ngValue]="skill.skill_id"
-            [disabled]="skill.qualified">
-            {{ skill.skill_name }}
-            (Current: {{ skill.actual_proficiency ?? 'Missing' }},
-            Required: {{ skill.required_proficiency }})
-          </option>
-        </select>
-
-        <label for="requiredLevel">Required proficiency (1–5)</label>
-        <select
-          id="requiredLevel"
-          name="requiredLevel"
-          [(ngModel)]="upskillForm.required_proficiency"
-          required>
-          <option [ngValue]="1">1 - Beginner</option>
-          <option [ngValue]="2">2 - Basic</option>
-          <option [ngValue]="3">3 - Intermediate</option>
-          <option [ngValue]="4">4 - Advanced</option>
-          <option [ngValue]="5">5 - Expert</option>
-        </select>
-
-        <label for="upskillFeedback">Reason / feedback for L&amp;K</label>
-        <textarea
-          id="upskillFeedback"
-          name="feedback"
-          [(ngModel)]="upskillForm.feedback"
-          rows="3"
-          placeholder="Explain the skill gap and expected improvement..."
-          required></textarea>
-
-        <div class="candidate-actions">
-          <button type="submit" [disabled]="submittingUpskill">
-            {{ submittingUpskill ? 'Sending...' : 'Send to L&K' }}
-          </button>
-
-          <button
-            type="button"
-            class="cancel-btn"
-            (click)="closeUpskillRequest()">
-            Cancel
-          </button>
-        </div>
-      </form>
     </div>
-  </ng-container>
+  </div>
+
+  <p class="additional-skills-note">
+    The employee may have other skills, but those do not replace a missing
+    project-required skill.
+  </p>
+</div>
+
+
+                                        <h4>Employee skills and L&amp;K assessment evidence</h4>
+
+                                        <div class="table-scroll skill-table">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Skill</th>
+                                                        <th>Type</th>
+                                                        <th>Employee proficiency</th>
+                                                        <th>L&amp;K proficiency</th>
+                                                        <th>L&amp;K score</th>
+                                                        <th>Experience (months)</th>
+                                                        <th>Project experience (months)</th>
+                                                        <th>Certification</th>
+                                                        <th>Decision</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let skill of item.employee.skills">
+                                                        <td>{{ skill.skill_name }}</td>
+                                                        <td>{{ skill.skill_type }}</td>
+                                                        <td>{{ skill.employee_proficiency ?? 'N/A' }}</td>
+                                                        <td>{{ skill.lk_assessment?.lk_proficiency ?? 'N/A' }}</td>
+                                                        <td>{{ skill.lk_assessment?.lk_score ?? 'N/A' }}</td>
+                                                        <td>{{ skill.experience ?? 'N/A' }}</td>
+                                                        <td>{{ skill.project_experience ?? 'N/A' }}</td>
+                                                        <td>{{ skill.certification || 'N/A' }}</td>
+                                                        <td>{{ skill.lk_assessment?.decision || 'N/A' }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="analysis-footer">
+                                            <button type="button" class="revert-btn"
+                                                (click)="requestUpskill(item.employee)">
+                                                Revert to L&amp;K
+                                            </button>
+                                            <button type="button" class="verify-btn" (click)="reviewVerify(item)">
+                                                Review &amp; Verify
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <tr *ngIf="filteredRecommendations.length === 0">
+                            <td colspan="9" class="empty-state">
+                                <div class="empty-icon">⌕</div>
+                                <strong>No recommendations found</strong>
+                                <p>
+                                    Try another search, or check whether employees meet the
+                                    L&amp;K eligibility requirements.
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                Showing {{ filteredRecommendations.length }} of
+                {{ aiRecommendations.length }} AI recommendations
+            </div>
+        </section>
+
+        <div class="human-review-note">
+            <strong>Human decision required.</strong>
+            AI recommendations support resource managers; they do not automatically
+            allocate employees or override L&amp;K approval.
+        </div>
+    </ng-container>
 </div>
