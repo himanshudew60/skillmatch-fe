@@ -1,318 +1,356 @@
+
 <div class="dashboard-page">
   <header class="dashboard-header">
-    <div>
-      <p class="eyebrow">WORKFORCE OVERVIEW</p>
-      <h1>Dashboard</h1>
-      <p class="subtitle">
-        Understand your workforce, project allocation and skill development.
-      </p>
+    <div class="header-copy">
+      <div class="eyebrow"><span class="eyebrow-dot"></span> SKILLMATCH WORKFORCE</div>
+      <h1>Dashboard <span class="title-period">.</span></h1>
+      <p class="subtitle">Your workforce, skills and project allocations in one place.</p>
     </div>
 
-    <button
-      class="refresh-button"
-      type="button"
-      (click)="loadDashboard()"
-      [disabled]="loading">
-      <span aria-hidden="true">↻</span>
-      {{ loading ? 'Refreshing...' : 'Refresh data' }}
-    </button>
+    <div class="header-actions">
+      <div class="updated-label">
+        <span class="live-dot"></span>
+        <span>{{ loading ? 'Updating data…' : 'Last updated ' + formatUpdatedAt() }}</span>
+      </div>
+      <button class="refresh-button" type="button"
+        (click)="loadDashboard()" [disabled]="loading">
+        <span class="refresh-icon" [class.spinning]="loading">↻</span>
+        {{ loading ? 'Refreshing' : 'Refresh data' }}
+      </button>
+    </div>
   </header>
 
-  <div class="loading-panel" *ngIf="loading">
-    <span class="loader"></span>
-    <p>Loading workforce analytics...</p>
-  </div>
-
-  <div class="error-panel" *ngIf="!loading && errorMessage">
+  <div class="error-banner" *ngIf="dashboardError" role="alert">
+    <span class="error-symbol">!</span>
     <div>
-      <strong>Dashboard unavailable</strong>
-      <p>{{ errorMessage }}</p>
+      <strong>Dashboard data unavailable</strong>
+      <p>{{ dashboardError }}</p>
     </div>
-    <button type="button" (click)="loadDashboard()">Try again</button>
+    <button type="button" class="retry-button" (click)="loadDashboard()">Try again</button>
   </div>
 
-  <ng-container *ngIf="!loading && summary as s">
+  <section class="section-heading">
+    <div>
+      <h2>Workforce overview</h2>
+      <p>A snapshot of your current people and resources.</p>
+    </div>
+    <span class="section-tag">LIVE SUMMARY</span>
+  </section>
 
-    <!-- Primary KPIs -->
-    <section class="stats-grid">
-      <article class="stat-card">
-        <div class="stat-top">
-          <span class="stat-label">Total employees</span>
-          <span class="stat-icon blue">♙</span>
-        </div>
-        <div class="stat-value">{{ s.total_employees }}</div>
-        <p class="stat-description">Active employee records</p>
-      </article>
-
-      <article class="stat-card">
-        <div class="stat-top">
-          <span class="stat-label">Allocated employees</span>
-          <span class="stat-icon teal">▣</span>
-        </div>
-        <div class="stat-value">{{ s.allocated_employees }}</div>
-        <p class="stat-description">
-          {{ allocationRate }}% of active employees
-        </p>
-      </article>
-
-      <article class="stat-card">
-        <div class="stat-top">
-          <span class="stat-label">Upskilling required</span>
-          <span class="stat-icon purple">↗</span>
-        </div>
-        <div class="stat-value">{{ s.employees_requiring_upskill }}</div>
-        <p class="stat-description">
-          Employees flagged by L&amp;K assessments
-        </p>
-      </article>
-
-      <article class="stat-card">
-        <div class="stat-top">
-          <span class="stat-label">Departments</span>
-          <span class="stat-icon amber">▦</span>
-        </div>
-        <div class="stat-value">{{ s.total_departments }}</div>
-        <p class="stat-description">Active departments</p>
-      </article>
-    </section>
-
-    <!-- Resource availability -->
-    <section class="panel resource-panel">
-      <div class="section-heading">
-        <div>
-          <h2>Resource availability</h2>
-          <p>How employees are currently classified in the resource register.</p>
-        </div>
-        <span class="subtle-tag">
-          {{ s.total_employees }} employees
-        </span>
+  <section class="stats-grid" aria-label="Workforce statistics">
+    <article class="stat-card stat-primary">
+      <div class="stat-top">
+        <div class="stat-icon icon-blue">♙</div>
+        <span class="stat-trend">Workforce</span>
       </div>
+      <p class="stat-label">Total employees</p>
+      <div class="stat-value">{{ summary.total_employees }}</div>
+      <p class="stat-foot">Registered in the system</p>
+    </article>
 
-      <div class="resource-grid">
-        <div class="resource-item">
-          <div class="resource-heading">
-            <span class="legend-dot available-dot"></span>
-            <span>Available</span>
-            <strong>{{ s.available_employees }}</strong>
-          </div>
-          <div class="progress-track">
-            <div
-              class="progress-fill available-fill"
-              [style.width.%]="getResourcePercentage(s.available_employees)">
-            </div>
-          </div>
-          <p>{{ getResourcePercentage(s.available_employees) }}% of employees</p>
-        </div>
-
-        <div class="resource-item">
-          <div class="resource-heading">
-            <span class="legend-dot allocated-dot"></span>
-            <span>Allocated</span>
-            <strong>{{ s.resource_status_allocated }}</strong>
-          </div>
-          <div class="progress-track">
-            <div
-              class="progress-fill allocated-fill"
-              [style.width.%]="getResourcePercentage(s.resource_status_allocated)">
-            </div>
-          </div>
-          <p>
-            {{ getResourcePercentage(s.resource_status_allocated) }}% by resource status
-          </p>
-        </div>
-
-        <div class="resource-item">
-          <div class="resource-heading">
-            <span class="legend-dot partial-dot"></span>
-            <span>Partially available</span>
-            <strong>{{ s.partially_available_employees }}</strong>
-          </div>
-          <div class="progress-track">
-            <div
-              class="progress-fill partial-fill"
-              [style.width.%]="getResourcePercentage(s.partially_available_employees)">
-            </div>
-          </div>
-          <p>
-            {{ getResourcePercentage(s.partially_available_employees) }}% of employees
-          </p>
-        </div>
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon icon-green">✓</div>
+        <span class="stat-mini-percent">{{ availabilityPercent }}%</span>
       </div>
+      <p class="stat-label">Available employees</p>
+      <div class="stat-value">{{ summary.available_employees }}</div>
+      <div class="mini-track"><span class="fill-green" [style.width.%]="availabilityPercent"></span></div>
+      <p class="stat-foot">Ready for a new opportunity</p>
+    </article>
 
-      <p class="data-note">
-        Allocation from project records and resource status are separate
-        measures. They may differ if employee resource statuses have not
-        been synchronised with project allocations.
-      </p>
-    </section>
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon icon-purple">✓</div>
+        <span class="stat-trend">Status 2</span>
+      </div>
+      <p class="stat-label">Reviewed by L&amp;K</p>
+      <div class="stat-value">{{ summary.reviewed_by_lk }}</div>
+      <p class="stat-foot">Reviewed employees</p>
+    </article>
 
-    <!-- Department breakdown -->
-    <section class="panel">
-      <div class="section-heading">
-        <div>
-          <h2>Department overview</h2>
-          <p>Compare team size and resource availability by department.</p>
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon icon-orange">↗</div>
+        <span class="stat-mini-percent">{{ upskillPercent }}%</span>
+      </div>
+      <p class="stat-label">Need upskilling</p>
+      <div class="stat-value">{{ summary.upskill_employees }}</div>
+      <div class="mini-track"><span class="fill-orange" [style.width.%]="upskillPercent"></span></div>
+      <p class="stat-foot">Employees requiring development</p>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon icon-teal">◎</div>
+        <span class="stat-trend">Status 4</span>
+      </div>
+      <p class="stat-label">Ready for allocation</p>
+      <div class="stat-value">{{ summary.ready_for_project_allocation }}</div>
+      <div class="mini-track"><span class="fill-indigo" [style.width.%]="readyforproject_allocation"></span></div>
+      <p class="stat-foot">Cleared for project allocation</p>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon icon-indigo">▣</div>
+        <span class="stat-mini-percent">{{ allocationPercent }}%</span>
+      </div>
+      <p class="stat-label">Allocated employees</p>
+      <div class="stat-value">{{ summary.allocated_employees }}</div>
+      <div class="mini-track"><span class="fill-indigo" [style.width.%]="allocationPercent"></span></div>
+      <p class="stat-foot">Employee status 5</p>
+    </article>
+  </section>
+
+  <section class="secondary-stats" aria-label="System totals">
+    <article class="secondary-card">
+      <div class="secondary-icon icon-blue">▤</div>
+      <div><p>Total projects</p><strong>{{ summary.total_projects }}</strong></div>
+    </article>
+    <article class="secondary-card">
+      <div class="secondary-icon icon-purple">⌘</div>
+      <div><p>Departments</p><strong>{{ summary.total_departments }}</strong></div>
+    </article>
+    <article class="secondary-card">
+      <div class="secondary-icon icon-orange">✳</div>
+      <div><p>Skills</p><strong>{{ summary.total_skills }}</strong></div>
+    </article>
+    <article class="secondary-card">
+      <div class="secondary-icon icon-teal">♙</div>
+      <div><p>Designations</p><strong>{{ summary.total_designations }}</strong></div>
+    </article>
+  </section>
+
+  <section class="insight-banner">
+    <div class="insight-symbol">✦</div>
+    <div class="insight-copy">
+      <span class="insight-kicker">YOUR WORKFORCE ASSISTANT</span>
+      <h2>Need an answer? Ask SkillMatch AI.</h2>
+      <p>Ask about available employees, project skill requirements, allocations, or workforce planning.</p>
+    </div>
+    <button class="primary-button" type="button" (click)="toggleChat(true)">
+      <span>✦</span> Ask AI <span class="button-arrow">↗</span>
+    </button>
+  </section>
+
+  <section class="content-section">
+    <div class="section-heading">
+      <div>
+        <h2>Project requirements</h2>
+        <p>Skills and resources requested by each project.</p>
+      </div>
+      <span class="count-pill">{{ projectRequirements.length }} projects</span>
+    </div>
+
+    <div class="project-grid" *ngIf="projectRequirements.length; else noProjects">
+      <article class="project-card"
+        *ngFor="let project of projectRequirements; trackBy: trackProject">
+        <div class="project-card-header">
+          <div class="project-avatar">{{ project.project_name.charAt(0) || 'P' }}</div>
+          <div class="project-title">
+            <h3>{{ project.project_name }}</h3>
+            <p>Project #{{ project.project_id }}</p>
+          </div>
+          <span class="resource-badge">{{ project.required_resources }} resources</span>
         </div>
-      </div>
 
-      <div class="empty-state" *ngIf="departments.length === 0">
-        No active departments found.
-      </div>
+        <div class="project-manager">
+          <span class="manager-label">PROJECT MANAGER</span>
+          <strong>{{ project.manager_name || 'Not assigned' }}</strong>
+        </div>
 
-      <div class="table-wrapper" *ngIf="departments.length > 0">
+        <div class="skills-heading">
+          <span>Required skills</span>
+          <span>Proficiency</span>
+        </div>
+
+        <div class="skill-row">
+          <div class="skill-name"><span class="skill-dot primary-dot"></span>
+            {{ project.primary_skill || 'Not specified' }}
+          </div>
+          <span class="proficiency-pill">{{ project.primary_proficiency ?? '—' }}<small>/5</small></span>
+        </div>
+        <div class="skill-row">
+          <div class="skill-name"><span class="skill-dot secondary-dot"></span>
+            {{ project.secondary_skill || 'Not specified' }}
+          </div>
+          <span class="proficiency-pill">{{ project.secondary_proficiency ?? '—' }}<small>/5</small></span>
+        </div>
+        <div class="skill-row">
+          <div class="skill-name"><span class="skill-dot tertiary-dot"></span>
+            {{ project.tertiary_skill || 'Not specified' }}
+          </div>
+          <span class="proficiency-pill">{{ project.tertiary_proficiency ?? '—' }}<small>/5</small></span>
+        </div>
+      </article>
+    </div>
+
+    <ng-template #noProjects>
+      <div class="empty-state">
+        <span>▤</span><h3>No project requirements found</h3>
+        <p>Project requirements will appear here when the API returns them.</p>
+      </div>
+    </ng-template>
+  </section>
+
+  <section class="content-section allocation-section">
+    <div class="section-heading">
+      <div>
+        <h2>Project allocation</h2>
+        <p>How employee allocations are distributed across projects.</p>
+      </div>
+      <span class="count-pill">{{ totalAllocatedFromProjects }} allocations</span>
+    </div>
+
+    <div class="allocation-overview" *ngIf="projectAllocationCounts.length; else noAllocationCounts">
+      <article class="allocation-project"
+        *ngFor="let project of projectAllocationCounts; trackBy: trackProjectCount">
+        <div class="allocation-project-top">
+          <div class="allocation-project-icon">▤</div>
+          <span class="allocation-number">{{ project.allocated_employees }}</span>
+        </div>
+        <h3>{{ project.project_name }}</h3>
+        <p>Allocated employees</p>
+        <div class="allocation-track">
+          <span [style.width.%]="totalAllocatedFromProjects ? (project.allocated_employees / totalAllocatedFromProjects * 100) : 0"></span>
+        </div>
+      </article>
+    </div>
+
+    <ng-template #noAllocationCounts>
+      <div class="empty-inline">No project allocation counts are available yet.</div>
+    </ng-template>
+  </section>
+
+  <section class="content-section">
+    <div class="section-heading">
+      <div>
+        <h2>Recent allocations</h2>
+        <p>Employees currently listed against projects in your API response.</p>
+      </div>
+      <span class="count-pill">{{ allocations.length }} records</span>
+    </div>
+
+    <div class="table-card">
+      <div class="table-scroll" *ngIf="allocations.length; else noAllocations">
         <table>
           <thead>
             <tr>
-              <th>Department</th>
-              <th>Total employees</th>
-              <th>Available</th>
-              <th>Allocated</th>
-              <th>Partially available</th>
-              <th>Team size</th>
+              <th>EMPLOYEE</th>
+              <th>PROJECT</th>
+              <th>START DATE</th>
+              <th>END DATE</th>
+              <th>STATUS</th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              *ngFor="let department of departments; trackBy: trackByDepartment">
-              <td class="department-name">
-                {{ department.department_name }}
-              </td>
-              <td>{{ department.total_employees }}</td>
+            <tr *ngFor="let allocation of allocations; trackBy: trackAllocation">
               <td>
-                <span class="number-pill green">
-                  {{ department.available_employees || 0 }}
-                </span>
-              </td>
-              <td>
-                <span class="number-pill blue-pill">
-                  {{ department.allocated_employees || 0 }}
-                </span>
-              </td>
-              <td>
-                {{ department.partially_available_employees || 0 }}
-              </td>
-              <td class="team-size">
-                <div class="team-bar">
-                  <div
-                    class="team-bar-fill"
-                    [style.width.%]="getDepartmentPercentage(
-                      department.total_employees,
-                      s.total_employees
-                    )">
-                  </div>
+                <div class="employee-cell">
+                 <span class="employee-avatar">
+  {{ allocation.emp_name.charAt(0) || 'E' }}
+</span>
+                  <div><strong>{{ allocation.emp_name }}</strong><small>Employee #{{ allocation.employee_id }}</small></div>
                 </div>
-                <span>
-                  {{ getDepartmentPercentage(
-                    department.total_employees,
-                    s.total_employees
-                  ) }}%
-                </span>
               </td>
+              <td><span class="project-cell">{{ allocation.project_name }}</span></td>
+              <td>{{ formatDate(allocation.start_date) }}</td>
+              <td>{{ formatDate(allocation.end_date) }}</td>
+              <td><span class="status-chip">Allocated</span></td>
             </tr>
           </tbody>
         </table>
       </div>
-    </section>
-
-    <!-- Skills and assessments -->
-    <div class="lower-grid">
-
-      <section class="panel">
-        <div class="section-heading">
-          <div>
-            <h2>Upskilling priorities</h2>
-            <p>Skills most frequently flagged by L&amp;K assessments.</p>
-          </div>
+      <ng-template #noAllocations>
+        <div class="empty-state">
+          <span>◎</span><h3>No allocations found</h3>
+          <p>Employee project allocations will appear here.</p>
         </div>
+      </ng-template>
+    </div>
+  </section>
 
-        <div class="empty-state" *ngIf="upskillSkills.length === 0">
-          No skills are currently marked as requiring upskilling.
-        </div>
+  <footer class="dashboard-footer">
+    <span><span class="footer-dot"></span> SkillMatch Workforce Dashboard</span>
+    <span>Workforce insights · Project planning · Resource visibility</span>
+  </footer>
+</div>
 
-        <div class="skill-list" *ngIf="upskillSkills.length > 0">
-          <div class="skill-row" *ngFor="let skill of upskillSkills">
-            <div class="skill-info">
-              <div class="skill-name">{{ skill.skill_name }}</div>
-              <div class="skill-caption">
-                {{ skill.employee_count }}
-                employee(s) · {{ skill.assessment_count }} assessment(s)
-              </div>
-            </div>
-            <span class="skill-count">{{ skill.assessment_count }}</span>
-          </div>
-        </div>
+<!-- Floating AI chat launcher -->
+<button *ngIf="!chatOpen" type="button" class="chat-fab"
+  (click)="toggleChat(true)" aria-label="Open AI project chat">
+  <span class="fab-icon">✦</span><span>Ask SkillMatch AI</span>
+</button>
 
-        <div class="assessment-summary">
-          <div>
-            <span>Pending assessments</span>
-            <strong>{{ s.pending_assessments }}</strong>
-          </div>
-          <div>
-            <span>Approved assessments</span>
-            <strong>{{ s.approved_assessments }}</strong>
-          </div>
-        </div>
-      </section>
+<!-- AI chat window -->
+<section *ngIf="chatOpen" class="chat-window"
+  role="dialog" aria-label="AI project chat">
+  <header class="chat-header">
+    <div class="chat-heading">
+      <div class="chat-avatar">✦</div>
+      <div>
+        <h2>SkillMatch AI</h2>
+        <p><span class="online-dot"></span> Workforce assistant</p>
+      </div>
+    </div>
+    <div class="chat-header-actions">
+      <button type="button" (click)="clearChat()" [disabled]="chatLoading"
+        title="Clear conversation" aria-label="Clear conversation">↺</button>
+      <button type="button" (click)="toggleChat(false)"
+        title="Close chat" aria-label="Close chat">×</button>
+    </div>
+  </header>
 
-      <section class="panel">
-        <div class="section-heading">
-          <div>
-            <h2>Recent assessments</h2>
-            <p>Latest recorded L&amp;K assessment activity.</p>
-          </div>
-        </div>
+  <div class="chat-body" #chatMessagesContainer>
+    <div class="welcome-message" *ngIf="chatMessages.length === 0">
+      <div class="welcome-icon">✦</div>
+      <span class="welcome-eyebrow">YOUR AI ASSISTANT</span>
+      <h3>How can I help you?</h3>
+      <p>Ask a question about your employee data, project requirements, or resource allocation.</p>
 
-        <div class="empty-state" *ngIf="recentAssessments.length === 0">
-          No assessment activity is available yet.
-        </div>
-
-        <div class="activity-list" *ngIf="recentAssessments.length > 0">
-          <article
-            class="activity-item"
-            *ngFor="let assessment of recentAssessments; trackBy: trackByAssessment">
-
-            <div class="activity-avatar">
-              {{ assessment.emp_name.charAt(0).toUpperCase() }}
-            </div>
-
-            <div class="activity-content">
-              <div class="activity-title">{{ assessment.emp_name }}</div>
-              <div class="activity-detail">
-                {{ assessment.emp_code }} · {{ assessment.skill_name }}
-              </div>
-              <div class="activity-date">
-                {{ formatDate(assessment.assessed_at || assessment.created_at) }}
-              </div>
-            </div>
-
-            <span
-              class="decision-badge"
-              [class.decision-approved]="assessment.decision === 'Approved'"
-              [class.decision-upskill]="assessment.decision === 'Upskill Required'"
-              [class.decision-pending]="assessment.decision === 'Pending'">
-              {{ formatDecision(assessment.decision) }}
-            </span>
-          </article>
-        </div>
-      </section>
-
+      <div class="suggestion-list">
+        <button type="button" *ngFor="let question of suggestedQuestions"
+          (click)="askSuggested(question)" [disabled]="chatLoading">
+          <span>{{ question }}</span><span class="suggestion-arrow">↗</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Additional totals -->
-    <section class="footer-stats">
-      <div>
-        <span>Active projects</span>
-        <strong>{{ s.total_projects }}</strong>
+    <div *ngFor="let message of chatMessages; trackBy: trackMessage"
+      class="message-row" [class.user-row]="message.role === 'user'"
+      [class.assistant-row]="message.role === 'assistant'">
+      <div class="message-avatar" *ngIf="message.role === 'assistant'">✦</div>
+      <div class="message-bubble"
+        [class.user-bubble]="message.role === 'user'"
+        [class.assistant-bubble]="message.role === 'assistant'">
+        <div class="message-text">{{ message.content }}</div>
+        <span class="message-time">{{ message.time }}</span>
       </div>
-      <div>
-        <span>Skills in directory</span>
-        <strong>{{ s.total_skills }}</strong>
-      </div>
-      <div>
-        <span>Upskilling assessment records</span>
-        <strong>{{ s.upskill_assessment_count }}</strong>
-      </div>
-    </section>
+    </div>
 
-  </ng-container>
-</div>
+    <div class="message-row assistant-row" *ngIf="chatLoading">
+      <div class="message-avatar">✦</div>
+      <div class="message-bubble assistant-bubble typing-bubble">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="chat-error" *ngIf="chatError" role="alert">{{ chatError }}</div>
+  </div>
+
+  <div class="chat-input-area">
+    <textarea #chatInputElement [(ngModel)]="chatInput"
+      (keydown)="onChatKeydown($event)" [disabled]="chatLoading"
+      placeholder="Ask about employees or projects..." rows="1"
+      aria-label="Message the AI assistant"></textarea>
+    <button type="button" class="send-button"
+      (click)="sendChatMessage()"
+      [disabled]="chatLoading || !chatInput.trim()"
+      aria-label="Send message">
+      <span *ngIf="!chatLoading">↑</span>
+      <span *ngIf="chatLoading" class="send-spinner"></span>
+    </button>
+    <p class="input-hint">Enter to send · Shift + Enter for a new line</p>
+  </div>
+</section>
