@@ -75,7 +75,7 @@
             <th>Email</th>
             <th>Department</th>
             <th>Designation</th>
-            <th>Status</th>
+         
             <th>Action</th>
           </tr>
         </thead>
@@ -111,21 +111,7 @@
               {{ employee.designation_name || '-' }}
             </td>
 
-            <td>
-
-              <span
-                class="status-badge"
-                [ngClass]="{
-                  'available': employee.resource_status == 0,
-                  'allocated': employee.resource_status == 1,
-                  'partial': employee.resource_status == 2
-                }">
-
-                {{ getResourceStatus(employee.resource_status) }}
-
-              </span>
-
-            </td>
+           
 
             <td>
 

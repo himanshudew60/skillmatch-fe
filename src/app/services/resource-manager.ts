@@ -45,12 +45,17 @@ export class ResourceManagerService {
       { headers: this.getHeaders() }
     );
   }
-  
+  getAiRecommendations(requirementId: number) {
+  return this.http.get(
+    `${this.apiUrl}/resource-manager/ai-recommendations/${requirementId}`,
+    { headers: this.getHeaders() }
+  );
+}
 
   getRecommendations(id: number) {
     return this.http.get<any>(
       `${this.apiUrl}/resource-manager/requirements/${id}/recommendations`,
-      { headers: this.getHeaders() }
+      
     );
   }
 
@@ -80,19 +85,7 @@ updateEmployeeStatus(employeeId: number, status: number) {
     }
   );
 }
-getAiRecommendations(requirementId: number) {
-  const token = localStorage.getItem('access_token');
 
-  return this.http.post<any>(
-    `${this.apiUrl}/resource-manager/requirements/${requirementId}/ai-recommendations`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
-}
   reviedByManager(id: number) {
     return this.http.get<any>(
       `${this.apiUrl}/resource-manager/reviedByManager/${id}`,
