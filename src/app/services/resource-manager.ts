@@ -71,7 +71,15 @@ sendUpskillRequest(payload: {
     }
   );
 }
-
+updateEmployeeStatus(employeeId: number, status: number) {
+  return this.http.put(
+    `${this.apiUrl}/employees/${employeeId}/status`,
+    { status: status },
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
 getAiRecommendations(requirementId: number) {
   const token = localStorage.getItem('access_token');
 

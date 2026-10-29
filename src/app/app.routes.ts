@@ -26,7 +26,7 @@ import { DesignationListComponent } from './component/designation/designation-li
 import { AddDesignationComponent } from './component/designation/add/add';
 import { EditDesignationComponent } from './component/designation/edit/edit';
 import { EditUserComponent } from './component/user/edit/edit';
-import { Dash } from './component/dash/dash';
+import {  DashboardInfo } from './component/dash/dash';
 import { LkEmployeeList } from './component/lk/lk-employee-list/lk-employee-list';
 import { LkEmployeeReview } from './component/lk/lk-employee-review/lk-employee-review';
 import { UpskillList } from './component/upskill/upskill-list/upskill-list';
@@ -35,13 +35,16 @@ import { RequirementList } from './component/resource-manager/requirement-list/r
 import { RequirementDetails } from './component/resource-manager/requirement-details/requirement-details';
 import { CandidateMatching } from './component/resource-manager/candidate-matching/candidate-matching';
 import { CandidateReview } from './component/resource-manager/candidate-review/candidate-review';
+import {  ProjectAllocationList } from './component/project-allocation/project-allocation-list/project-allocation-list';
+import { AllocateEmployee } from './component/project-allocation/create/create';
+import {  EditAllocation } from './component/project-allocation/edit/edit';
 
 export const routes: Routes = [
   { path: '', component: Home },
   {
     path: 'dashboard', component: Dashboard,
     children: [
-      {path:'',component:Dash},
+      {path:'',component:DashboardInfo},
       // employees
       { path: 'employees', component: Employees },
       { path: 'employees/addemployees', component: EmployeeAdd },
@@ -88,9 +91,11 @@ export const routes: Routes = [
       {path:'resource-manager',component:RequirementList},
       {path:'resource-manager/requirements/:id',component:RequirementDetails},
       {path:'resource-manager/candidate-matching/:id',component:CandidateMatching},
-      {path:'resource-manager/candidate-review/:id',component:CandidateReview}
-
-
+      {path:'resource-manager/candidate-review/:id',component:CandidateReview},
+// project-allocation
+{path:'project-allocation',component:ProjectAllocationList},
+{path:'project-allocation/create',component:AllocateEmployee},
+{path:'project-allocation/edit/:id',component:EditAllocation}
 
     ], canActivate: [authGuard]
   },

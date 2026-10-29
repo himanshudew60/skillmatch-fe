@@ -1,9 +1,318 @@
+<div class="dashboard-page">
+  <header class="dashboard-header">
+    <div>
+      <p class="eyebrow">WORKFORCE OVERVIEW</p>
+      <h1>Dashboard</h1>
+      <p class="subtitle">
+        Understand your workforce, project allocation and skill development.
+      </p>
+    </div>
 
-<div class="dashboard">
-    <div class="dashboard-header">
-        <h1>Dashboard</h1>
+    <button
+      class="refresh-button"
+      type="button"
+      (click)="loadDashboard()"
+      [disabled]="loading">
+      <span aria-hidden="true">↻</span>
+      {{ loading ? 'Refreshing...' : 'Refresh data' }}
+    </button>
+  </header>
+
+  <div class="loading-panel" *ngIf="loading">
+    <span class="loader"></span>
+    <p>Loading workforce analytics...</p>
+  </div>
+
+  <div class="error-panel" *ngIf="!loading && errorMessage">
+    <div>
+      <strong>Dashboard unavailable</strong>
+      <p>{{ errorMessage }}</p>
     </div>
-    <div class="dashboard-content">
-        <p>Welcome to the dashboard</p>
+    <button type="button" (click)="loadDashboard()">Try again</button>
+  </div>
+
+  <ng-container *ngIf="!loading && summary as s">
+
+    <!-- Primary KPIs -->
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Total employees</span>
+          <span class="stat-icon blue">♙</span>
+        </div>
+        <div class="stat-value">{{ s.total_employees }}</div>
+        <p class="stat-description">Active employee records</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Allocated employees</span>
+          <span class="stat-icon teal">▣</span>
+        </div>
+        <div class="stat-value">{{ s.allocated_employees }}</div>
+        <p class="stat-description">
+          {{ allocationRate }}% of active employees
+        </p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Upskilling required</span>
+          <span class="stat-icon purple">↗</span>
+        </div>
+        <div class="stat-value">{{ s.employees_requiring_upskill }}</div>
+        <p class="stat-description">
+          Employees flagged by L&amp;K assessments
+        </p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Departments</span>
+          <span class="stat-icon amber">▦</span>
+        </div>
+        <div class="stat-value">{{ s.total_departments }}</div>
+        <p class="stat-description">Active departments</p>
+      </article>
+    </section>
+
+    <!-- Resource availability -->
+    <section class="panel resource-panel">
+      <div class="section-heading">
+        <div>
+          <h2>Resource availability</h2>
+          <p>How employees are currently classified in the resource register.</p>
+        </div>
+        <span class="subtle-tag">
+          {{ s.total_employees }} employees
+        </span>
+      </div>
+
+      <div class="resource-grid">
+        <div class="resource-item">
+          <div class="resource-heading">
+            <span class="legend-dot available-dot"></span>
+            <span>Available</span>
+            <strong>{{ s.available_employees }}</strong>
+          </div>
+          <div class="progress-track">
+            <div
+              class="progress-fill available-fill"
+              [style.width.%]="getResourcePercentage(s.available_employees)">
+            </div>
+          </div>
+          <p>{{ getResourcePercentage(s.available_employees) }}% of employees</p>
+        </div>
+
+        <div class="resource-item">
+          <div class="resource-heading">
+            <span class="legend-dot allocated-dot"></span>
+            <span>Allocated</span>
+            <strong>{{ s.resource_status_allocated }}</strong>
+          </div>
+          <div class="progress-track">
+            <div
+              class="progress-fill allocated-fill"
+              [style.width.%]="getResourcePercentage(s.resource_status_allocated)">
+            </div>
+          </div>
+          <p>
+            {{ getResourcePercentage(s.resource_status_allocated) }}% by resource status
+          </p>
+        </div>
+
+        <div class="resource-item">
+          <div class="resource-heading">
+            <span class="legend-dot partial-dot"></span>
+            <span>Partially available</span>
+            <strong>{{ s.partially_available_employees }}</strong>
+          </div>
+          <div class="progress-track">
+            <div
+              class="progress-fill partial-fill"
+              [style.width.%]="getResourcePercentage(s.partially_available_employees)">
+            </div>
+          </div>
+          <p>
+            {{ getResourcePercentage(s.partially_available_employees) }}% of employees
+          </p>
+        </div>
+      </div>
+
+      <p class="data-note">
+        Allocation from project records and resource status are separate
+        measures. They may differ if employee resource statuses have not
+        been synchronised with project allocations.
+      </p>
+    </section>
+
+    <!-- Department breakdown -->
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <h2>Department overview</h2>
+          <p>Compare team size and resource availability by department.</p>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="departments.length === 0">
+        No active departments found.
+      </div>
+
+      <div class="table-wrapper" *ngIf="departments.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Department</th>
+              <th>Total employees</th>
+              <th>Available</th>
+              <th>Allocated</th>
+              <th>Partially available</th>
+              <th>Team size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let department of departments; trackBy: trackByDepartment">
+              <td class="department-name">
+                {{ department.department_name }}
+              </td>
+              <td>{{ department.total_employees }}</td>
+              <td>
+                <span class="number-pill green">
+                  {{ department.available_employees || 0 }}
+                </span>
+              </td>
+              <td>
+                <span class="number-pill blue-pill">
+                  {{ department.allocated_employees || 0 }}
+                </span>
+              </td>
+              <td>
+                {{ department.partially_available_employees || 0 }}
+              </td>
+              <td class="team-size">
+                <div class="team-bar">
+                  <div
+                    class="team-bar-fill"
+                    [style.width.%]="getDepartmentPercentage(
+                      department.total_employees,
+                      s.total_employees
+                    )">
+                  </div>
+                </div>
+                <span>
+                  {{ getDepartmentPercentage(
+                    department.total_employees,
+                    s.total_employees
+                  ) }}%
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Skills and assessments -->
+    <div class="lower-grid">
+
+      <section class="panel">
+        <div class="section-heading">
+          <div>
+            <h2>Upskilling priorities</h2>
+            <p>Skills most frequently flagged by L&amp;K assessments.</p>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="upskillSkills.length === 0">
+          No skills are currently marked as requiring upskilling.
+        </div>
+
+        <div class="skill-list" *ngIf="upskillSkills.length > 0">
+          <div class="skill-row" *ngFor="let skill of upskillSkills">
+            <div class="skill-info">
+              <div class="skill-name">{{ skill.skill_name }}</div>
+              <div class="skill-caption">
+                {{ skill.employee_count }}
+                employee(s) · {{ skill.assessment_count }} assessment(s)
+              </div>
+            </div>
+            <span class="skill-count">{{ skill.assessment_count }}</span>
+          </div>
+        </div>
+
+        <div class="assessment-summary">
+          <div>
+            <span>Pending assessments</span>
+            <strong>{{ s.pending_assessments }}</strong>
+          </div>
+          <div>
+            <span>Approved assessments</span>
+            <strong>{{ s.approved_assessments }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div>
+            <h2>Recent assessments</h2>
+            <p>Latest recorded L&amp;K assessment activity.</p>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="recentAssessments.length === 0">
+          No assessment activity is available yet.
+        </div>
+
+        <div class="activity-list" *ngIf="recentAssessments.length > 0">
+          <article
+            class="activity-item"
+            *ngFor="let assessment of recentAssessments; trackBy: trackByAssessment">
+
+            <div class="activity-avatar">
+              {{ assessment.emp_name.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="activity-content">
+              <div class="activity-title">{{ assessment.emp_name }}</div>
+              <div class="activity-detail">
+                {{ assessment.emp_code }} · {{ assessment.skill_name }}
+              </div>
+              <div class="activity-date">
+                {{ formatDate(assessment.assessed_at || assessment.created_at) }}
+              </div>
+            </div>
+
+            <span
+              class="decision-badge"
+              [class.decision-approved]="assessment.decision === 'Approved'"
+              [class.decision-upskill]="assessment.decision === 'Upskill Required'"
+              [class.decision-pending]="assessment.decision === 'Pending'">
+              {{ formatDecision(assessment.decision) }}
+            </span>
+          </article>
+        </div>
+      </section>
+
     </div>
-</div>  
+
+    <!-- Additional totals -->
+    <section class="footer-stats">
+      <div>
+        <span>Active projects</span>
+        <strong>{{ s.total_projects }}</strong>
+      </div>
+      <div>
+        <span>Skills in directory</span>
+        <strong>{{ s.total_skills }}</strong>
+      </div>
+      <div>
+        <span>Upskilling assessment records</span>
+        <strong>{{ s.upskill_assessment_count }}</strong>
+      </div>
+    </section>
+
+  </ng-container>
+</div>

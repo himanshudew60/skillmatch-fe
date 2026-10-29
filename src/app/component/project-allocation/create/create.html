@@ -1,0 +1,232 @@
+
+<div class="allocation-page">
+  <div class="allocation-card">
+
+    <div class="page-header">
+      <h2>Allocate Employees</h2>
+      <p>Select one or more approved employees for this project.</p>
+    </div>
+
+    <div class="alert success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="alert error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="loading-message" *ngIf="loadingProject">
+      Loading project details...
+    </div>
+
+    <ng-container *ngIf="selectedProject as project">
+
+      <!-- Selected project -->
+      <div class="selected-project">
+        <div>
+          <span class="section-label">Selected Project</span>
+          <h3>{{ project.project_name }}</h3>
+          <p>
+            Project Code:
+            <strong>{{ project.project_code }}</strong>
+          </p>
+        </div>
+
+        <div class="project-id">
+          Project ID: {{ project.id }}
+        </div>
+      </div>
+
+      <!-- Project capacity -->
+      <div class="capacity-panel">
+        <div>
+          <span class="capacity-label">Required employees</span>
+          <strong>{{ project.required_resources }}</strong>
+        </div>
+
+        <div>
+          <span class="capacity-label">Currently allocated</span>
+          <strong>{{ taggedEmployees.length }}</strong>
+        </div>
+
+        <div>
+          <span class="capacity-label">Available slots</span>
+          <strong>{{ remainingSlots }}</strong>
+        </div>
+      </div>
+
+      <div class="capacity-warning" *ngIf="remainingSlots === 0">
+        This project has reached its allocation limit.
+      </div>
+
+      <!-- Employees already allocated -->
+      <section class="tagged-section">
+        <h3>Employees Already Allocated</h3>
+
+        <div *ngIf="taggedEmployees.length === 0" class="empty-state">
+          No employees are currently allocated to this project.
+        </div>
+
+        <div class="table-wrapper" *ngIf="taggedEmployees.length > 0">
+          <table class="tagged-table">
+            <thead>
+              <tr>
+                <th>Employee Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let employee of taggedEmployees">
+                <td>{{ employee.emp_name }}</td>
+                <td>{{ employee.start_date | date:'dd MMM yyyy' }}</td>
+                <td>{{ employee.end_date | date:'dd MMM yyyy' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Multiple employee allocation form -->
+      <form #allocationForm="ngForm"
+            (ngSubmit)="submitForm(allocationForm)">
+
+        <h3 class="form-section-title">New Allocation</h3>
+
+        <!-- Employee checkboxes -->
+        <div class="form-group">
+          <label>Approved Employees <span>*</span></label>
+
+          <p class="hint" *ngIf="remainingSlots > 0">
+            Select up to {{ remainingSlots }} employee(s).
+          </p>
+
+          <div class="loading-message" *ngIf="loadingEmployees">
+            Loading approved employees...
+          </div>
+
+          <div
+            class="employee-selection"
+            *ngIf="!loadingEmployees &&
+                   remainingSlots > 0 &&
+                   availableEmployees.length > 0">
+
+            <label
+              class="employee-option"
+              *ngFor="let employee of availableEmployees">
+
+              <input
+                type="checkbox"
+                [checked]="isEmployeeSelected(employee.id)"
+                [disabled]="loading ||
+                  (!isEmployeeSelected(employee.id) &&
+                   selectedEmployeeIds.length >= remainingSlots)"
+                (change)="toggleEmployee(employee.id, $event)">
+
+              <span>{{ employee.emp_name }}</span>
+            </label>
+          </div>
+
+          <div
+            class="empty-state"
+            *ngIf="!loadingEmployees &&
+                   remainingSlots > 0 &&
+                   availableEmployees.length === 0">
+            No approved employees are available who are not already
+            allocated to this project.
+          </div>
+
+          <div
+            class="capacity-warning"
+            *ngIf="remainingSlots === 0">
+            This project has reached its allocation limit.
+          </div>
+
+          <p class="hint"
+             *ngIf="remainingSlots > 0 && !loadingEmployees">
+            Selected: {{ selectedEmployeeIds.length }} /
+            {{ remainingSlots }}
+          </p>
+
+          <small class="field-error"
+                 *ngIf="submitted && selectedEmployeeIds.length === 0">
+            Please select at least one employee.
+          </small>
+        </div>
+
+        <!-- Allocation dates -->
+        <div class="date-row">
+          <div class="form-group">
+            <label for="start_date">
+              Start Date <span>*</span>
+            </label>
+
+            <input
+              type="date"
+              id="start_date"
+              name="start_date"
+              [(ngModel)]="form.start_date"
+              [max]="form.end_date || null"
+              required
+              #startDate="ngModel">
+
+            <small
+              class="field-error"
+              *ngIf="startDate.invalid &&
+                     (startDate.touched || submitted)">
+              Start date is required.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="end_date">
+              End Date <span>*</span>
+            </label>
+
+            <input
+              type="date"
+              id="end_date"
+              name="end_date"
+              [(ngModel)]="form.end_date"
+              [min]="form.start_date || null"
+              required
+              #endDate="ngModel">
+
+            <small
+              class="field-error"
+              *ngIf="endDate.invalid &&
+                     (endDate.touched || submitted)">
+              End date is required.
+            </small>
+          </div>
+        </div>
+
+        <!-- Form actions -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cancel()"
+            [disabled]="loading">
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="btn-submit"
+            [disabled]="loading ||
+                        loadingProject ||
+                        loadingEmployees ||
+                        remainingSlots === 0 ||
+                        availableEmployees.length === 0">
+            {{ loading ? 'Allocating...' : 'Allocate Selected Employees' }}
+          </button>
+        </div>
+
+      </form>
+    </ng-container>
+  </div>
+</div>

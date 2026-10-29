@@ -257,7 +257,7 @@ this.onDecisionChange(this.skillForms.length - 1, 'Approved');
           res.message || 'Selected skills sent to upskill successfully.';
 
         setTimeout(() => {
-          this.router.navigate(['/dashboard/lk/employees']);
+          this.router.navigate(['/dashboard/lk']);
         }, 1000);
       },
       error: (err: any) => {

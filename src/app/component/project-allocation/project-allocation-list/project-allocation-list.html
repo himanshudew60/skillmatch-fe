@@ -1,0 +1,105 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h2>Project Allocations</h2>
+      <p>Manage project resource allocation and availability.</p>
+    </div>
+
+    <button class="refresh-btn" (click)="loadProjects()">
+      ↻ Refresh
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="message">
+    Loading projects...
+  </div>
+
+  <div *ngIf="errorMessage && !loading" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div
+    *ngIf="!loading && !errorMessage && projects.length === 0"
+    class="message"
+  >
+    No projects found.
+  </div>
+
+  <div
+    class="project-list"
+    *ngIf="!loading && projects.length > 0"
+  >
+    <div class="project-card" *ngFor="let project of projects">
+
+      <div class="project-info">
+        <div class="project-heading">
+          <div>
+            <h3>{{ project.project_name }}</h3>
+            <span class="project-code">
+              {{ project.project_code }}
+            </span>
+          </div>
+
+          <span class="client-name">
+            {{ project.client_name || 'No client' }}
+          </span>
+        </div>
+
+        <div class="project-details">
+          <div class="detail">
+            <span class="detail-label">Project Manager</span>
+            <strong>{{ project.project_manager || 'Not assigned' }}</strong>
+          </div>
+
+          <div class="detail">
+            <span class="detail-label">Required Resources</span>
+            <strong>{{ project.required_resources }}</strong>
+          </div>
+
+          <div class="detail">
+            <span class="detail-label">Tagged Employees</span>
+            <strong>{{ project.tagged_employees }}</strong>
+          </div>
+
+          <div class="detail">
+            <span class="detail-label">Remaining Resources</span>
+            <strong
+              [class.remaining-zero]="
+                (+project.required_resources - +project.tagged_employees) <= 0
+              "
+            >
+              {{
+                (+project.required_resources - +project.tagged_employees) < 0
+                  ? 0
+                  : (+project.required_resources - +project.tagged_employees)
+              }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-actions">
+        <button
+          class="allocate-btn"
+          (click)="allocateProject(project)"
+          [disabled]="
+            (+project.required_resources - +project.tagged_employees) <= 0
+          "
+        >
+          Allocate
+        </button>
+
+        <button
+          class="edit-btn"
+          (click)="editProject(project)"
+        >
+          Edit
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

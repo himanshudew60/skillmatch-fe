@@ -220,51 +220,9 @@ export class CandidateMatching implements OnInit {
    * The employee must have the required skill and sufficient L&K
    * proficiency to satisfy the requirement.
    */
-  getRequiredSkillStatus(employee: any, requiredSkill: any): string {
-    const employeeSkill = this.getEmployeeSkill(employee, requiredSkill);
 
-    if (!employeeSkill) {
-      return 'Missing required skill';
-    }
 
-    const assessment = employeeSkill.lk_assessment;
-
-    if (
-      !assessment ||
-      String(assessment.decision ?? '').trim().toLowerCase() !== 'approved'
-    ) {
-      return 'L&K evidence unavailable';
-    }
-
-    if (
-      requiredSkill.required_proficiency != null &&
-      (
-        assessment.lk_proficiency == null ||
-        Number(assessment.lk_proficiency) <
-          Number(requiredSkill.required_proficiency)
-      )
-    ) {
-      return 'Below required proficiency';
-    }
-
-    return 'Requirement met';
-  }
-
-  getRequiredSkillStatusClass(employee: any, requiredSkill: any): string {
-    const status = this.getRequiredSkillStatus(employee, requiredSkill);
-
-    switch (status) {
-      case 'Requirement met':
-        return 'skill-status-met';
-      case 'Missing required skill':
-        return 'skill-status-missing';
-      case 'Below required proficiency':
-        return 'skill-status-below';
-      default:
-        return 'skill-status-unknown';
-    }
-  }
-
+  
   getMatchedRequiredSkillCount(employee: any): number {
     return this.requiredSkills.filter(
       (skill: any) =>
@@ -275,6 +233,7 @@ export class CandidateMatching implements OnInit {
   getEmployeeSkillCount(employee: any): number {
     return (employee?.skills ?? []).length;
   }
+  
 
   requestUpskill(item: any): void {
     const employee = item.employee ?? item;
@@ -306,11 +265,135 @@ export class CandidateMatching implements OnInit {
     );
   }
 
-  reviewVerify(item: any): void {
-    alert(item.employee)
+ reviewVerify(item: any): void {
+  const employee = item.employee ?? item;
+  const employeeId = Number(employee.employee_id ?? employee.id);
+
+  if (!employeeId) {
+    alert('Employee ID not found.');
+    return;
   }
+
+  this.service.updateEmployeeStatus(employeeId, 4).subscribe({
+    next: (response: any) => {
+      if (response?.success) {
+        alert('Employee reviewed successfully and moved to Resource Allocator.');
+        this.loadRecommendations();
+      } else {
+        alert(response?.message || 'Failed to update employee status.');
+      }
+    },
+    error: (err: any) => {
+      alert(
+        err?.error?.message ||
+        'Failed to update employee status. Please try again.'
+      );
+    }
+  });
+}
 
   back(): void {
     this.router.navigate(['/dashboard/resource-manager']);
   }
+  
+getRequiredSkillStatus(employee: any, requiredSkill: any): string {
+  const employeeSkill = this.getEmployeeSkill(employee, requiredSkill);
+
+  if (!employeeSkill) {
+    return 'Missing required skill';
+  }
+
+  const target = requiredSkill.required_proficiency;
+  const assessment = employeeSkill.lk_assessment;
+
+  if (
+    target != null &&
+    Number(employeeSkill.employee_proficiency ?? 0) < Number(target)
+  ) {
+    return 'Below required proficiency';
+  }
+
+  if (
+    !assessment ||
+    String(assessment.decision ?? '').trim().toLowerCase() !== 'approved' ||
+    assessment.lk_proficiency == null
+  ) {
+    return 'L&K review needed';
+  }
+
+  if (
+    target != null &&
+    Number(assessment.lk_proficiency) < Number(target)
+  ) {
+    return 'Below required proficiency';
+  }
+
+  return 'Requirement met';
+}
+
+getRequiredSkillStatusClass(
+  employee: any,
+  requiredSkill: any
+): string {
+  const status = this.getRequiredSkillStatus(employee, requiredSkill);
+
+  switch (status) {
+    case 'Requirement met':
+      return 'skill-status-met';
+
+    case 'Missing required skill':
+      return 'skill-status-missing';
+
+    case 'Below required proficiency':
+      return 'skill-status-below';
+
+    default:
+      return 'skill-status-unknown';
+  }
+}
+
+needsUpskill(employee: any): boolean {
+  return this.requiredSkills.some((skill: any) => {
+    const status = this.getRequiredSkillStatus(employee, skill);
+
+    return [
+      'Missing required skill',
+      'Below required proficiency'
+    ].includes(status);
+  });
+}
+
+getEmployeeStatus(employee: any): string {
+  const statuses = this.requiredSkills.map((skill: any) =>
+    this.getRequiredSkillStatus(employee, skill)
+  );
+
+  if (statuses.some(status =>
+    ['Missing required skill', 'Below required proficiency']
+      .includes(status)
+  )) {
+    return 'Upskill recommended';
+  }
+
+  if (statuses.some(status => status !== 'Requirement met')) {
+    return 'L&K review needed';
+  }
+
+  return 'Meets requirements';
+}
+
+getEmployeeStatusClass(employee: any): string {
+  const status = this.getEmployeeStatus(employee);
+
+  if (status === 'Meets requirements') {
+    return 'status-ready';
+  }
+
+  if (status === 'Upskill recommended') {
+    return 'status-upskill';
+  }
+
+  return 'status-review';
+}
+
 }

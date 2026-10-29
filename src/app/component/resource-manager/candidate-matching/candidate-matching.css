@@ -1014,3 +1014,223 @@ tbody tr.selected-row {
     flex-direction: column;
   }
 }
+
+.employee-list-section {
+  margin-top: 22px;
+}
+
+.employee-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.employee-list-heading h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.employee-list-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.employee-list-heading select {
+  padding: 10px 12px;
+  border: 1px solid #dce2ed;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.employee-card {
+  padding: 18px;
+  margin-bottom: 12px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.employee-card-header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.employee-identity {
+  flex: 1;
+  min-width: 0;
+}
+
+.employee-identity h3 {
+  margin: 0 0 5px;
+  color: #172033;
+  font-size: 15px;
+}
+
+.employee-identity p {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.employee-match {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.employee-match strong {
+  color: #2563eb;
+  font-size: 25px;
+}
+
+.employee-match span {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.employee-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #edf0f6;
+}
+
+.status-pill {
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-ready,
+.skill-status-met {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.status-upskill,
+.skill-status-below {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.status-review,
+.skill-status-unknown {
+  color: #475569;
+  background: #e2e8f0;
+}
+
+.skill-status-missing {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.details-button,
+.verify-button,
+.upskill-button {
+  padding: 9px 13px;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.details-button {
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.skill-comparison {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.skill-comparison h4 {
+  margin: 0 0 14px;
+  font-size: 15px;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #edf0f6;
+}
+
+.comparison-skill-name,
+.comparison-value {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.comparison-skill-name strong,
+.comparison-value strong {
+  color: #273449;
+  font-size: 13px;
+}
+
+.comparison-skill-name span,
+.comparison-value span {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.skill-status {
+  padding: 6px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.comparison-note {
+  margin: 14px 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.upskill-button {
+  color: #fff;
+  background: #2563eb;
+  margin-right: 8px;
+}
+
+.verify-button {
+  color: #334155;
+  background: #e2e8f0;
+}
+
+@media (max-width: 760px) {
+  .employee-list-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .employee-list-heading select {
+    width: 100%;
+  }
+
+  .comparison-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .comparison-skill-name {
+    grid-column: 1 / -1;
+  }
+}
+
